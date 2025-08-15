@@ -1,68 +1,43 @@
 import { Section, Cell, List, Button, Text, Input, Pagination } from '@telegram-apps/telegram-ui';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { FC, ChangeEvent } from 'react';
 
 import { Page } from '@/components/Page.tsx';
 import { bem } from '@/css/bem.ts';
+import { fetchAccounts, deleteAccount, type Account } from '@/services/accountService';
 
 import './AccountPage.css';
 
 const [, e] = bem('account-page');
 
-interface Account {
-    id: number;
-    info: string;
-    status: 'active' | 'inactive' | 'running';
-}
-
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 9;
 
 export const AccountPage: FC = () => {
-    const [accounts, setAccounts] = useState<Account[]>([
-        {
-            id: 1,
-            info: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            status: 'active'
-        },
-        {
-            id: 2,
-            info: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            status: 'running'
-        },
-        {
-            id: 3,
-            info: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-            status: 'inactive'
-        },
-        {
-            id: 4,
-            info: "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-            status: 'active'
-        },
-        {
-            id: 5,
-            info: "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.",
-            status: 'running'
-        },
-        {
-            id: 6,
-            info: "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
-            status: 'active'
-        },
-        {
-            id: 7,
-            info: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.",
-            status: 'inactive'
-        },
-        {
-            id: 8,
-            info: "Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.",
-            status: 'running'
-        }
-    ]);
+    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+
+    // Load accounts on component mount
+    useEffect(() => {
+        loadAccounts();
+    }, []);
+
+    const loadAccounts = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await fetchAccounts();
+            setAccounts(data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Có lỗi xảy ra khi tải dữ liệu');
+            console.error('Error loading accounts:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Helper functions
     const truncateText = (text: string, maxLength: number = 80) => {
@@ -105,11 +80,17 @@ export const AccountPage: FC = () => {
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentAccounts = filteredAccounts.slice(startIndex, endIndex);
 
-    const handleDelete = (id: number) => {
-        setAccounts(prev => prev.filter(account => account.id !== id));
-        // Reset to first page if current page becomes empty
-        if (currentAccounts.length === 1 && currentPage > 1) {
-            setCurrentPage(prev => prev - 1);
+    const handleDelete = async (id: number) => {
+        try {
+            await deleteAccount(id);
+            setAccounts(prev => prev.filter(account => account.id !== id));
+            // Reset to first page if current page becomes empty
+            if (currentAccounts.length === 1 && currentPage > 1) {
+                setCurrentPage(prev => prev - 1);
+            }
+        } catch (err) {
+            alert('Có lỗi xảy ra khi xóa tài khoản');
+            console.error('Error deleting account:', err);
         }
     };
 
@@ -130,6 +111,29 @@ export const AccountPage: FC = () => {
     const handlePageChange = (_event: any, page: number) => {
         setCurrentPage(page);
     };
+
+    if (loading) {
+        return (
+            <Page>
+                <div className={e('loading-container')}>
+                    <Text>Đang tải dữ liệu...</Text>
+                </div>
+            </Page>
+        );
+    }
+
+    if (error) {
+        return (
+            <Page>
+                <div className={e('error-container')}>
+                    <Text className={e('error-text')}>{error}</Text>
+                    <Button mode="outline" onClick={loadAccounts} className={e('retry-btn')}>
+                        Thử lại
+                    </Button>
+                </div>
+            </Page>
+        );
+    }
 
     return (
         <Page>

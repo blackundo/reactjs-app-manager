@@ -1,47 +1,21 @@
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Button,
-    Box,
-    Chip,
-    Typography,
-    IconButton,
-    Tooltip
-} from '@mui/material';
-import { Modal, Input, Switch, Button as TGButton, Text, Title, Section, Cell, List } from '@telegram-apps/telegram-ui';
-import { useState } from 'react';
+import { Modal, Input, Switch, Button, Text, Title, Section, Cell, List } from '@telegram-apps/telegram-ui';
+import { useState, useEffect } from 'react';
 import type { FC } from 'react';
 
 import { Page } from '@/components/Page.tsx';
 import { bem } from '@/css/bem.ts';
+import {
+    fetchApiConfigsList,
+    createApiConfig,
+    updateApiConfig,
+    deleteApiConfig,
+    testPurchase,
+    type ApiConfig
+} from '@/services/apiConfigService';
 
 import './ApiConfigPage.css';
 
 const [, e] = bem('api-config-page');
-
-interface ApiConfig {
-    id: number;
-    name: string;
-    version: 'version_1' | 'version_2';
-    domain: string;
-    endpoint?: string;
-    username?: string;
-    password?: string;
-    api_key?: string;
-    coupon?: string;
-    product_id: string;
-    amount: number;
-    chat_id?: string;
-    price_range_min?: number;
-    price_range_max?: number;
-    excluded_category_ids?: string;
-    enabled: boolean;
-}
 
 interface FormData {
     name: string;
@@ -62,76 +36,9 @@ interface FormData {
 }
 
 export const ApiConfigPage: FC = () => {
-    const [apiConfigsList, setApiConfigsList] = useState<ApiConfig[]>([
-        {
-            id: 1,
-            name: 'Facebook Clone API',
-            version: 'version_1',
-            domain: 'facebook.com',
-            endpoint: '/api/BResource.php',
-            username: 'user123',
-            password: 'pass123',
-            product_id: 'fb_clone_001',
-            amount: 1000,
-            chat_id: '-1001234567890',
-            price_range_min: 10,
-            price_range_max: 100,
-            excluded_category_ids: '1,2,3',
-            enabled: true
-        },
-        {
-            id: 2,
-            name: 'Coin Master API',
-            version: 'version_2',
-            domain: 'coinmaster.com',
-            endpoint: '/api/v2/orders',
-            api_key: 'cm_api_key_123',
-            coupon: 'WELCOME10',
-            product_id: 'cm_api_002',
-            amount: 500,
-            price_range_min: 5,
-            price_range_max: 50,
-            enabled: true
-        },
-        {
-            id: 3,
-            name: 'Xún Order API',
-            version: 'version_1',
-            domain: 'xun.com',
-            endpoint: '/api/orders',
-            username: 'xun_user',
-            password: 'xun_pass',
-            product_id: 'xun_order_003',
-            amount: 2000,
-            excluded_category_ids: '5,6',
-            enabled: false
-        },
-        {
-            id: 4,
-            name: 'TikTok Clone API',
-            version: 'version_2',
-            domain: 'tiktok.com',
-            endpoint: '/api/tiktok/orders',
-            api_key: 'tt_api_key_456',
-            product_id: 'tt_clone_004',
-            amount: 800,
-            price_range_min: 1,
-            price_range_max: 200,
-            enabled: true
-        },
-        {
-            id: 5,
-            name: 'Instagram API',
-            version: 'version_1',
-            domain: 'instagram.com',
-            endpoint: '/api/ig/orders',
-            username: 'ig_user',
-            password: 'ig_pass',
-            product_id: 'ig_api_005',
-            amount: 1500,
-            enabled: true
-        }
-    ]);
+    const [apiConfigsList, setApiConfigsList] = useState<ApiConfig[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -153,6 +60,25 @@ export const ApiConfigPage: FC = () => {
         excluded_category_ids: '',
         enabled: true
     });
+
+    // Load API configs on component mount
+    useEffect(() => {
+        loadApiConfigs();
+    }, []);
+
+    const loadApiConfigs = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await fetchApiConfigsList();
+            setApiConfigsList(data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Có lỗi xảy ra khi tải dữ liệu');
+            console.error('Error loading API configs:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const resetForm = () => {
         setFormData({
@@ -204,89 +130,149 @@ export const ApiConfigPage: FC = () => {
         setIsModalOpen(true);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!formData.name || !formData.domain || !formData.product_id) {
             alert('Vui lòng điền đầy đủ thông tin bắt buộc');
             return;
         }
 
-        const newConfig: Omit<ApiConfig, 'id'> = {
-            name: formData.name,
-            version: formData.version,
-            domain: formData.domain,
-            endpoint: formData.endpoint || undefined,
-            username: formData.username || undefined,
-            password: formData.password || undefined,
-            api_key: formData.api_key || undefined,
-            coupon: formData.coupon || undefined,
-            product_id: formData.product_id,
-            amount: formData.amount,
-            chat_id: formData.chat_id || undefined,
-            price_range_min: formData.price_range_min ? parseInt(formData.price_range_min) : undefined,
-            price_range_max: formData.price_range_max ? parseInt(formData.price_range_max) : undefined,
-            excluded_category_ids: formData.excluded_category_ids || undefined,
-            enabled: formData.enabled
-        };
-
-        if (isEditing && editingId) {
-            setApiConfigsList(prev => prev.map(config =>
-                config.id === editingId
-                    ? { ...newConfig, id: editingId }
-                    : config
-            ));
-        } else {
-            const newId = Math.max(...apiConfigsList.map(c => c.id)) + 1;
-            setApiConfigsList(prev => [...prev, { ...newConfig, id: newId }]);
+        if (formData.version === 'version_1') {
+            if (!formData.username || !formData.password) {
+                alert('Version 1 cần username và password');
+                return;
+            }
+        } else if (formData.version === 'version_2') {
+            if (!formData.api_key) {
+                alert('Version 2 cần API key');
+                return;
+            }
         }
 
-        setIsModalOpen(false);
-        resetForm();
+        try {
+            if (isEditing && editingId) {
+                await updateApiConfig({ ...formData, id: editingId });
+                alert('Đã cập nhật cấu hình API thành công');
+            } else {
+                await createApiConfig(formData);
+                alert('Đã tạo cấu hình API thành công');
+            }
+
+            await loadApiConfigs(); // Refresh data
+            setIsModalOpen(false);
+            resetForm();
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra';
+            alert(errorMessage);
+            console.error('Error saving API config:', err);
+        }
     };
 
     const handleEditConfig = (config: ApiConfig) => {
         openEditModal(config);
     };
 
-    const handleTestPurchase = (configId: number) => {
-        console.log('Test purchase for config:', configId);
-        alert(`Test mua hàng cho config ID: ${configId}`);
-    };
+    const handleTestPurchase = async (configId: number) => {
+        if (!confirm('Bạn có muốn test mua với cấu hình này?')) return;
 
-    const handleDeleteConfig = (configId: number) => {
-        if (confirm('Bạn có chắc chắn muốn xóa cấu hình này?')) {
-            setApiConfigsList(prev => prev.filter(config => config.id !== configId));
+        try {
+            const response = await testPurchase({
+                api_config_id: configId,
+                custom_amount: 1
+            });
+            alert(`Kết quả: ${response.message}\nSố lần thành công: ${response.success_count}`);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi test mua';
+            alert(errorMessage);
+            console.error('Error testing purchase:', err);
         }
     };
 
-    const handleToggleStatus = (configId: number) => {
-        setApiConfigsList(prev => prev.map(config =>
-            config.id === configId
-                ? { ...config, enabled: !config.enabled }
-                : config
-        ));
+    const handleDeleteConfig = async (configId: number) => {
+        if (!confirm('Bạn có chắc chắn muốn xóa cấu hình này?')) return;
+
+        try {
+            await deleteApiConfig(configId);
+            alert('Đã xóa cấu hình API thành công');
+            await loadApiConfigs(); // Refresh data
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi xóa';
+            alert(errorMessage);
+            console.error('Error deleting API config:', err);
+        }
+    };
+
+    const handleToggleStatus = async (configId: number) => {
+        try {
+            const config = apiConfigsList.find(c => c.id === configId);
+            if (!config) return;
+
+            const updatedConfig = { ...config, enabled: !config.enabled };
+            await updateApiConfig({
+                ...updatedConfig,
+                product_id: updatedConfig.product_id.toString(),
+                price_range_min: updatedConfig.price_range_min?.toString() || '',
+                price_range_max: updatedConfig.price_range_max?.toString() || '',
+                excluded_category_ids: updatedConfig.excluded_category_ids || '',
+                username: updatedConfig.username || '',
+                password: updatedConfig.password || '',
+                api_key: updatedConfig.api_key || '',
+                coupon: updatedConfig.coupon || '',
+                endpoint: updatedConfig.endpoint || '',
+                chat_id: updatedConfig.chat_id || ''
+            });
+
+            await loadApiConfigs(); // Refresh data
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi cập nhật trạng thái';
+            alert(errorMessage);
+            console.error('Error toggling status:', err);
+        }
     };
 
     const getVersionText = (version: string) => {
         return version === 'version_1' ? 'V1 (User/Pass)' : 'V2 (API Key)';
     };
 
-    const getStatusColor = (enabled: boolean) => {
-        return enabled ? 'success' : 'error';
-    };
+    // const getStatusColor = (enabled: boolean) => {
+    //     return enabled ? 'success' : 'error';
+    // };
 
     const getStatusText = (enabled: boolean) => {
         return enabled ? 'Hoạt động' : 'Tắt';
     };
 
+    if (loading) {
+        return (
+            <Page>
+                <div className={e('loading-container')}>
+                    <Text>Đang tải dữ liệu...</Text>
+                </div>
+            </Page>
+        );
+    }
+
+    if (error) {
+        return (
+            <Page>
+                <div className={e('error-container')}>
+                    <Text className={e('error-text')}>{error}</Text>
+                    <Button mode="outline" onClick={loadApiConfigs} className={e('retry-btn')}>
+                        Thử lại
+                    </Button>
+                </div>
+            </Page>
+        );
+    }
+
     return (
         <Page>
             <div className={e('header')}>
-                <Typography variant="h5" component="h1" className={e('title')}>
+                <Title level="2" className={e('title')}>
                     Quản lý Cấu hình API
-                </Typography>
+                </Title>
                 <Button
-                    variant="contained"
-                    color="primary"
+                    mode="filled"
+                    size="m"
                     className={e('add-button')}
                     onClick={openCreateModal}
                 >
@@ -294,142 +280,107 @@ export const ApiConfigPage: FC = () => {
                 </Button>
             </div>
 
-            <div className={e('table-container')}>
-                <TableContainer component={Paper} className={e('table')}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Tên</TableCell>
-                                <TableCell>Version</TableCell>
-                                <TableCell>Domain</TableCell>
-                                <TableCell>Product ID</TableCell>
-                                <TableCell>Amount</TableCell>
-                                <TableCell>Bộ lọc</TableCell>
-                                <TableCell>Trạng thái</TableCell>
-                                <TableCell>Thao tác</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {apiConfigsList.length > 0 ? (
-                                apiConfigsList.map((config) => (
-                                    <TableRow key={config.id}>
-                                        <TableCell>
-                                            <Typography variant="body2" fontWeight="medium">
-                                                {config.name}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={getVersionText(config.version)}
-                                                size="small"
-                                                variant="outlined"
-                                                color={config.version === 'version_1' ? 'primary' : 'secondary'}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body2" color="textSecondary">
-                                                {config.domain}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body2" fontFamily="monospace">
-                                                {config.product_id}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="body2" fontWeight="medium">
-                                                {config.amount.toLocaleString()}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Box sx={{ fontSize: '0.75rem' }}>
+            <List>
+                {apiConfigsList.length > 0 ? (
+                    apiConfigsList.map((config) => (
+                        <Section key={config.id} header={config.name}>
+                            <Cell className={e('config-item')}>
+                                <div className={e('config-content')}>
+                                    <div className={e('config-info')}>
+                                        <div className={e('config-row')}>
+                                            <Text className={e('config-label')}>Version:</Text>
+                                            <Text className={e('config-value')}>
+                                                {getVersionText(config.version)}
+                                            </Text>
+                                        </div>
+                                        <div className={e('config-row')}>
+                                            <Text className={e('config-label')}>Domain:</Text>
+                                            <Text className={e('config-value')}>{config.domain}</Text>
+                                        </div>
+                                        <div className={e('config-row')}>
+                                            <Text className={e('config-label')}>Product ID:</Text>
+                                            <Text className={e('config-value')}>{config.product_id}</Text>
+                                        </div>
+                                        <div className={e('config-row')}>
+                                            <Text className={e('config-label')}>Amount:</Text>
+                                            <Text className={e('config-value')}>{config.amount.toLocaleString()}</Text>
+                                        </div>
+
+                                        {/* Filter info */}
+                                        {(config.price_range_min || config.price_range_max || config.excluded_category_ids) && (
+                                            <div className={e('filter-info')}>
+                                                <Text className={e('filter-title')}>Bộ lọc:</Text>
                                                 {config.price_range_min || config.price_range_max ? (
-                                                    <Chip
-                                                        label={`💰 ${config.price_range_min || 0}-${config.price_range_max || '∞'}`}
-                                                        size="small"
-                                                        variant="outlined"
-                                                        sx={{ mr: 0.5, mb: 0.5 }}
-                                                    />
+                                                    <Text className={e('filter-item')}>
+                                                        💰 Giá: {config.price_range_min || 0}-{config.price_range_max || '∞'}
+                                                    </Text>
                                                 ) : null}
                                                 {config.excluded_category_ids ? (
-                                                    <Chip
-                                                        label={`🚫 Loại trừ: ${config.excluded_category_ids}`}
-                                                        size="small"
-                                                        color="warning"
-                                                        variant="outlined"
-                                                        sx={{ mr: 0.5, mb: 0.5 }}
-                                                    />
+                                                    <Text className={e('filter-item')}>
+                                                        🚫 Loại trừ: {config.excluded_category_ids}
+                                                    </Text>
                                                 ) : null}
-                                                {!config.price_range_min && !config.price_range_max && !config.excluded_category_ids ? (
-                                                    <Typography variant="caption" color="textSecondary">
-                                                        Không có bộ lọc
-                                                    </Typography>
-                                                ) : null}
-                                            </Box>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={getStatusText(config.enabled)}
-                                                color={getStatusColor(config.enabled)}
-                                                size="small"
-                                                variant="filled"
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className={e('config-actions')}>
+                                        <div className={e('status-indicator')}>
+                                            <span
+                                                className={e('status-dot', config.enabled ? 'enabled' : 'disabled')}
                                             />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                                <Tooltip title="Sửa cấu hình">
-                                                    <IconButton
-                                                        size="small"
-                                                        color="primary"
-                                                        onClick={() => handleEditConfig(config)}
-                                                    >
-                                                        ✏️
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip title="Test mua hàng">
-                                                    <IconButton
-                                                        size="small"
-                                                        color="success"
-                                                        onClick={() => handleTestPurchase(config.id)}
-                                                    >
-                                                        🧪
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip title="Bật/Tắt">
-                                                    <IconButton
-                                                        size="small"
-                                                        color={config.enabled ? 'warning' : 'success'}
-                                                        onClick={() => handleToggleStatus(config.id)}
-                                                    >
-                                                        {config.enabled ? '⏸️' : '▶️'}
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip title="Xóa cấu hình">
-                                                    <IconButton
-                                                        size="small"
-                                                        color="error"
-                                                        onClick={() => handleDeleteConfig(config.id)}
-                                                    >
-                                                        🗑️
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={8} align="center">
-                                        <Typography variant="body2" color="textSecondary">
-                                            Chưa có cấu hình API nào. Hãy tạo cấu hình mới.
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </div>
+                                            <Text className={e('status-text')}>
+                                                {getStatusText(config.enabled)}
+                                            </Text>
+                                        </div>
+
+                                        <div className={e('action-buttons')}>
+                                            <Button
+                                                size="s"
+                                                mode="outline"
+                                                onClick={() => handleEditConfig(config)}
+                                                className={e('edit-btn')}
+                                            >
+                                                ✏️ Sửa
+                                            </Button>
+                                            <Button
+                                                size="s"
+                                                mode="outline"
+                                                onClick={() => handleTestPurchase(config.id)}
+                                                className={e('test-btn')}
+                                            >
+                                                🧪 Test
+                                            </Button>
+                                            <Button
+                                                size="s"
+                                                mode="outline"
+                                                onClick={() => handleToggleStatus(config.id)}
+                                                className={e('toggle-btn')}
+                                            >
+                                                {config.enabled ? '⏸️ Tắt' : '▶️ Bật'}
+                                            </Button>
+                                            <Button
+                                                size="s"
+                                                mode="outline"
+                                                onClick={() => handleDeleteConfig(config.id)}
+                                                className={e('delete-btn')}
+                                            >
+                                                🗑️ Xóa
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Cell>
+                        </Section>
+                    ))
+                ) : (
+                    <Section header="Danh sách cấu hình">
+                        <Cell className={e('no-configs')}>
+                            <Text>Chưa có cấu hình API nào. Hãy tạo cấu hình mới.</Text>
+                        </Cell>
+                    </Section>
+                )}
+            </List>
 
             {/* Telegram UI Modal */}
             <Modal
@@ -614,19 +565,19 @@ export const ApiConfigPage: FC = () => {
                     </List>
 
                     <div className={e('modal-actions')}>
-                        <TGButton
+                        <Button
                             mode="filled"
                             onClick={handleSubmit}
                             disabled={!formData.name || !formData.domain || !formData.product_id}
                         >
                             {isEditing ? 'Cập nhật' : 'Tạo'}
-                        </TGButton>
-                        <TGButton
+                        </Button>
+                        <Button
                             mode="outline"
                             onClick={() => setIsModalOpen(false)}
                         >
                             Hủy
-                        </TGButton>
+                        </Button>
                     </div>
                 </div>
             </Modal>

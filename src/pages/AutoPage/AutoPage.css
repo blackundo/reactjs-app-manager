@@ -1,0 +1,70 @@
+.auto-page__config-section,
+.auto-page__action-section,
+.auto-page__refresh-section {
+    padding: 16px;
+}
+
+.auto-page__config-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.auto-page__config-label {
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+}
+
+.auto-page__config-select,
+.auto-page__config-input {
+    width: 100%;
+}
+
+.auto-page__config-help {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.auto-page__start-btn {
+    width: 100%;
+}
+
+.auto-page__refresh-btn {
+    width: 100%;
+}
+
+.auto-page__job-item {
+    padding: 12px 16px;
+}
+
+.auto-page__job-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.auto-page__job-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.auto-page__job-id {
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+}
+
+.auto-page__job-next {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.auto-page__stop-btn {
+    min-width: 60px;
+}
+
+.auto-page__no-jobs {
+    padding: 16px;
+    text-align: center;
+    color: var(--tg-theme-hint-color);
+}

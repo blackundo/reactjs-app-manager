@@ -1,16 +1,15 @@
-import { Section, Cell, List, Image } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 
 import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
 
-import tonSvg from '../IndexPage/ton.svg';
 
 export const ManagementPage: FC = () => {
     return (
         <Page back={false}>
             <List>
-                <Section header="Features">
+                {/* <Section header="Features">
                     <Link to="/ton-connect">
                         <Cell
                             before={<Image src={tonSvg} />}
@@ -19,19 +18,29 @@ export const ManagementPage: FC = () => {
                             TON Connect
                         </Cell>
                     </Link>
-                </Section>
-                <Section header="Application Launch Data">
+                </Section> */}
+                <Section header="Quản lý tài khoản">
                     <Link to="/account">
                         <Cell subtitle="Tài khoản đã chạy">Account</Cell>
                     </Link>
+                    <Link to="/upload">
+                        <Cell subtitle="Upload file txt/xml">Upload Files</Cell>
+                    </Link>
+                </Section>
+                <Section header="Quản lý API">
                     <Link to="/api-config">
                         <Cell subtitle="Quản lý cấu hình API">API Config</Cell>
                     </Link>
-                    <Link to="/launch-params">
-                        <Cell subtitle="Platform identifier, Mini Apps version, etc.">Launch Parameters</Cell>
+                    <Link to="/auto">
+                        <Cell subtitle="Quản lý auto jobs">Auto Jobs</Cell>
                     </Link>
-                    <Link to="/theme-params">
-                        <Cell subtitle="Telegram application palette information">Theme Parameters</Cell>
+                    <Link to="/smart-auto">
+                        <Cell subtitle="Smart Auto - Mua clone thông minh">Smart Auto</Cell>
+                    </Link>
+                </Section>
+                <Section header="Lịch sử">
+                    <Link to="/runs">
+                        <Cell subtitle="Xem lịch sử runs">Run History</Cell>
                     </Link>
                 </Section>
             </List>

@@ -1,0 +1,288 @@
+.smart-auto-page__description {
+    padding: 16px;
+}
+
+.smart-auto-page__api-item {
+    padding: 12px 16px;
+}
+
+.smart-auto-page__api-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.smart-auto-page__api-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.smart-auto-page__api-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.smart-auto-page__api-name {
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+}
+
+.smart-auto-page__api-version {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.smart-auto-page__preview-btn {
+    min-width: 80px;
+}
+
+.smart-auto-page__product-stats {
+    margin-top: 8px;
+}
+
+.smart-auto-page__stats-text {
+    font-size: 12px;
+    color: var(--tg-theme-link-color);
+}
+
+.smart-auto-page__config-section {
+    padding: 16px;
+}
+
+.smart-auto-page__scheduler-config {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.smart-auto-page__interval-config {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.smart-auto-page__config-label {
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+}
+
+.smart-auto-page__config-help {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.smart-auto-page__action-section {
+    padding: 16px;
+}
+
+.smart-auto-page__run-btn {
+    width: 100%;
+}
+
+.smart-auto-page__job-item {
+    padding: 12px 16px;
+}
+
+.smart-auto-page__job-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.smart-auto-page__job-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.smart-auto-page__job-id {
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+}
+
+.smart-auto-page__job-next {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.smart-auto-page__stop-btn {
+    min-width: 60px;
+}
+
+.smart-auto-page__refresh-section {
+    padding: 16px;
+}
+
+.smart-auto-page__refresh-btn {
+    width: 100%;
+}
+
+.smart-auto-page__results-section {
+    padding: 16px;
+}
+
+.smart-auto-page__job-id-text {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+    margin-top: 8px;
+}
+
+.smart-auto-page__info-box {
+    padding: 12px;
+    background-color: var(--tg-theme-bg-color);
+    border: 1px solid var(--tg-theme-hint-color);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.smart-auto-page__result-box {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.smart-auto-page__result-box.completed {
+    background-color: #e8f5e8;
+    border: 1px solid #4caf50;
+}
+
+.smart-auto-page__result-box.scheduled {
+    background-color: #e3f2fd;
+    border: 1px solid #2196f3;
+}
+
+.smart-auto-page__result-box.skipped {
+    background-color: #fff3e0;
+    border: 1px solid #ff9800;
+}
+
+.smart-auto-page__result-box.error {
+    background-color: #ffebee;
+    border: 1px solid #f44336;
+}
+
+/* Product Preview Styles */
+.smart-auto-page__preview-section {
+    padding: 16px;
+}
+
+.smart-auto-page__preview-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.smart-auto-page__summary-stats {
+    padding: 12px;
+    background-color: var(--tg-theme-secondary-bg-color);
+    border-radius: 8px;
+}
+
+.smart-auto-page__summary-text {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--tg-theme-text-color);
+}
+
+.smart-auto-page__summary-text:last-child {
+    margin-bottom: 0;
+}
+
+.smart-auto-page__products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.smart-auto-page__products-title {
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+    margin-bottom: 8px;
+}
+
+.smart-auto-page__product-item {
+    padding: 12px;
+    border: 1px solid var(--tg-theme-hint-color);
+    border-radius: 8px;
+    background-color: var(--tg-theme-bg-color);
+}
+
+.smart-auto-page__product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.smart-auto-page__product-id {
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+    font-size: 14px;
+}
+
+.smart-auto-page__product-price {
+    font-weight: 600;
+    color: var(--tg-theme-link-color);
+    font-size: 14px;
+}
+
+.smart-auto-page__product-name {
+    font-size: 13px;
+    color: var(--tg-theme-text-color);
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.smart-auto-page__product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.smart-auto-page__product-category {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.smart-auto-page__product-stock {
+    font-size: 12px;
+    color: var(--tg-theme-text-color);
+}
+
+.smart-auto-page__product-status {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.smart-auto-page__status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.smart-auto-page__status-badge.available {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.smart-auto-page__status-badge.out-of-stock {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.smart-auto-page__status-badge.price-filtered {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.smart-auto-page__status-badge.category-excluded {
+    background-color: #fce4ec;
+    color: #c2185b;
+}

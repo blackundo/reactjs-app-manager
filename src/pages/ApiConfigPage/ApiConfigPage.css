@@ -244,3 +244,137 @@
 .api-config-page__modal-content .Switch {
     margin-top: 8px;
 }
+
+/* New styles for Telegram UI components */
+.api-config-page__loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    color: var(--tg-theme-hint-color);
+}
+
+.api-config-page__error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+.api-config-page__error-text {
+    color: #f44336;
+    margin-bottom: 8px;
+}
+
+.api-config-page__retry-btn {
+    min-width: 120px;
+}
+
+.api-config-page__config-item {
+    padding: 16px 0;
+}
+
+.api-config-page__config-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.api-config-page__config-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.api-config-page__config-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.api-config-page__config-label {
+    font-weight: 600;
+    color: var(--tg-theme-hint-color);
+    min-width: 80px;
+}
+
+.api-config-page__config-value {
+    color: var(--tg-theme-text-color);
+    text-align: right;
+}
+
+.api-config-page__filter-info {
+    margin-top: 8px;
+    padding: 8px;
+    background-color: var(--tg-theme-secondary-bg-color);
+    border-radius: 8px;
+}
+
+.api-config-page__filter-title {
+    font-weight: 600;
+    color: var(--tg-theme-hint-color);
+    margin-bottom: 4px;
+}
+
+.api-config-page__filter-item {
+    font-size: 12px;
+    color: var(--tg-theme-text-color);
+    margin-bottom: 2px;
+}
+
+.api-config-page__config-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.api-config-page__status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+.api-config-page__status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.api-config-page__status-dot.enabled {
+    background-color: #4caf50;
+}
+
+.api-config-page__status-dot.disabled {
+    background-color: #f44336;
+}
+
+.api-config-page__status-text {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.api-config-page__action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.api-config-page__edit-btn,
+.api-config-page__test-btn,
+.api-config-page__toggle-btn,
+.api-config-page__delete-btn {
+    min-width: 80px;
+    height: 32px;
+    font-size: 12px;
+}
+
+.api-config-page__no-configs {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--tg-theme-hint-color);
+}

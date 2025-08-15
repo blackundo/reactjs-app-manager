@@ -8,9 +8,12 @@ import { ManagementPage } from '@/pages/ManagementPage/ManagementPage';
 import { InitDataPage } from '@/pages/InitDataPage';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage';
-import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
 import { AccountPage } from '@/pages/AccountPage/AccountPage';
 import { ApiConfigPage } from '@/pages/ApiConfigPage/ApiConfigPage';
+import { UploadPage } from '@/pages/UploadPage/UploadPage';
+import { AutoPage } from '@/pages/AutoPage/AutoPage';
+import { SmartAutoPage } from '@/pages/SmartAutoPage/SmartAutoPage';
+import { RunsPage } from '@/pages/RunsPage/RunsPage';
 
 import './TabBar.css';
 
@@ -75,9 +78,12 @@ const TabBarContent: FC = () => {
                     <Route path="/init-data" element={<InitDataPage />} />
                     <Route path="/launch-params" element={<LaunchParamsPage />} />
                     <Route path="/theme-params" element={<ThemeParamsPage />} />
-                    <Route path="/ton-connect" element={<TONConnectPage />} />
                     <Route path="/account" element={<AccountPage />} />
                     <Route path="/api-config" element={<ApiConfigPage />} />
+                    <Route path="/upload" element={<UploadPage />} />
+                    <Route path="/auto" element={<AutoPage />} />
+                    <Route path="/smart-auto" element={<SmartAutoPage />} />
+                    <Route path="/runs" element={<RunsPage />} />
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
             </div>

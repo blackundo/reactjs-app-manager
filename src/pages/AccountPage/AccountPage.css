@@ -89,3 +89,29 @@
     display: flex;
     justify-content: center;
 }
+
+.account-page__loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    color: var(--tg-theme-hint-color);
+}
+
+.account-page__error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+.account-page__error-text {
+    color: #f44336;
+    margin-bottom: 8px;
+}
+
+.account-page__retry-btn {
+    min-width: 120px;
+}
