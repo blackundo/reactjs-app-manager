@@ -22,7 +22,7 @@ import { bem } from '@/css/bem.ts';
 
 import './ApiConfigPage.css';
 
-const [b, e] = bem('api-config-page');
+const [, e] = bem('api-config-page');
 
 interface ApiConfig {
     id: number;

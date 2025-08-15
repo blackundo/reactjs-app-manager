@@ -6,7 +6,7 @@ import { bem } from '@/css/bem.ts';
 
 import './StatisticsPage.css';
 
-const [b, e] = bem('statistics-page');
+const [, e] = bem('statistics-page');
 
 export const StatisticsPage: FC = () => {
     return (

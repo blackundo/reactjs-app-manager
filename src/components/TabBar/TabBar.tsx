@@ -1,6 +1,6 @@
 import { Tabbar } from '@telegram-apps/telegram-ui';
 import { useState, useRef, useEffect } from 'react';
-import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import type { FC } from 'react';
 
 import { StatisticsPage } from '@/pages/StatisticsPage/StatisticsPage';
@@ -16,7 +16,6 @@ import './TabBar.css';
 
 const TabBarContent: FC = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const tabbarRef = useRef<HTMLDivElement>(null);
 
     const tabs = [

@@ -1,4 +1,4 @@
-import { Section, Cell, List, Button, Title, Text, Input, Pagination } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Button, Text, Input, Pagination } from '@telegram-apps/telegram-ui';
 import { useState, useMemo } from 'react';
 import type { FC, ChangeEvent } from 'react';
 
@@ -7,7 +7,7 @@ import { bem } from '@/css/bem.ts';
 
 import './AccountPage.css';
 
-const [b, e] = bem('account-page');
+const [, e] = bem('account-page');
 
 interface Account {
     id: number;
@@ -127,7 +127,7 @@ export const AccountPage: FC = () => {
         setCurrentPage(1); // Reset to first page when searching
     };
 
-    const handlePageChange = (event: any, page: number) => {
+    const handlePageChange = (_event: any, page: number) => {
         setCurrentPage(page);
     };
 
