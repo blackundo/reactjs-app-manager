@@ -24,6 +24,9 @@ export const ManagementPage: FC = () => {
                     <Link to="/account">
                         <Cell subtitle="Tài khoản đã chạy">Account</Cell>
                     </Link>
+                    <Link to="/api-config">
+                        <Cell subtitle="Quản lý cấu hình API">API Config</Cell>
+                    </Link>
                     <Link to="/launch-params">
                         <Cell subtitle="Platform identifier, Mini Apps version, etc.">Launch Parameters</Cell>
                     </Link>

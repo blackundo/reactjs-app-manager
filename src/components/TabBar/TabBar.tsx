@@ -10,6 +10,7 @@ import { LaunchParamsPage } from '@/pages/LaunchParamsPage';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage';
 import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
 import { AccountPage } from '@/pages/AccountPage/AccountPage';
+import { ApiConfigPage } from '@/pages/ApiConfigPage/ApiConfigPage';
 
 import './TabBar.css';
 
@@ -77,6 +78,7 @@ const TabBarContent: FC = () => {
                     <Route path="/theme-params" element={<ThemeParamsPage />} />
                     <Route path="/ton-connect" element={<TONConnectPage />} />
                     <Route path="/account" element={<AccountPage />} />
+                    <Route path="/api-config" element={<ApiConfigPage />} />
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
             </div>

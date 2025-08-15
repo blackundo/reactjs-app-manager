@@ -6,6 +6,7 @@ import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
 import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
 import { AccountPage } from '@/pages/AccountPage/AccountPage';
+import { ApiConfigPage } from '@/pages/ApiConfigPage/ApiConfigPage';
 
 interface Route {
   path: string;
@@ -20,6 +21,7 @@ export const routes: Route[] = [
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },
   { path: '/account', Component: AccountPage, title: 'Account' },
+  { path: '/api-config', Component: ApiConfigPage, title: 'API Config' },
   {
     path: '/ton-connect',
     Component: TONConnectPage,

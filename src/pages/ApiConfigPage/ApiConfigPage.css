@@ -1,0 +1,246 @@
+.api-config-page__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--tg-theme-bg-color);
+    border-bottom: 1px solid var(--tg-theme-hint-color);
+}
+
+.api-config-page__title {
+    margin: 0;
+    color: var(--tg-theme-text-color);
+}
+
+.api-config-page__add-button {
+    background: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    border: 1px solid var(--tg-theme-hint-color);
+    font-weight: 600;
+    text-transform: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.api-config-page__add-button:hover {
+    background: var(--tg-theme-button-color);
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.api-config-page__table-container {
+    padding: 16px;
+    background: var(--tg-theme-bg-color);
+}
+
+.api-config-page__table {
+    background: var(--tg-theme-bg-color);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--tg-theme-hint-color);
+}
+
+/* Override Material-UI styles to match Telegram dark theme */
+.api-config-page__table .MuiTableHead-root .MuiTableCell-root {
+    background: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
+    font-weight: 600;
+    border-bottom: 2px solid var(--tg-theme-hint-color);
+    padding: 16px 12px;
+}
+
+.api-config-page__table .MuiTableBody-root .MuiTableCell-root {
+    color: var(--tg-theme-text-color);
+    border-bottom: 1px solid var(--tg-theme-hint-color);
+    padding: 12px;
+    background: var(--tg-theme-bg-color);
+}
+
+.api-config-page__table .MuiTableRow-root:hover {
+    background: var(--tg-theme-secondary-bg-color);
+}
+
+.api-config-page__table .MuiTableRow-root:nth-child(even) {
+    background: var(--tg-theme-secondary-bg-color);
+}
+
+.api-config-page__table .MuiTableRow-root:nth-child(even):hover {
+    background: var(--tg-theme-hint-color);
+}
+
+/* Dark theme overrides for Material-UI components */
+.api-config-page__table .MuiChip-root {
+    background: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
+    border-color: var(--tg-theme-hint-color);
+}
+
+.api-config-page__table .MuiChip-root.MuiChip-colorPrimary {
+    background: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+}
+
+.api-config-page__table .MuiChip-root.MuiChip-colorSecondary {
+    background: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
+    border-color: var(--tg-theme-hint-color);
+}
+
+.api-config-page__table .MuiChip-root.MuiChip-colorSuccess {
+    background: #4caf50;
+    color: white;
+}
+
+.api-config-page__table .MuiChip-root.MuiChip-colorError {
+    background: #f44336;
+    color: white;
+}
+
+.api-config-page__table .MuiChip-root.MuiChip-colorWarning {
+    background: #ff9800;
+    color: white;
+}
+
+/* Icon buttons dark theme */
+.api-config-page__table .MuiIconButton-root {
+    color: var(--tg-theme-text-color);
+    background: var(--tg-theme-secondary-bg-color);
+    border: 1px solid var(--tg-theme-hint-color);
+    margin: 2px;
+}
+
+.api-config-page__table .MuiIconButton-root:hover {
+    background: var(--tg-theme-hint-color);
+}
+
+.api-config-page__table .MuiIconButton-root.MuiIconButton-colorPrimary {
+    color: var(--tg-theme-button-color);
+}
+
+.api-config-page__table .MuiIconButton-root.MuiIconButton-colorSuccess {
+    color: #4caf50;
+}
+
+.api-config-page__table .MuiIconButton-root.MuiIconButton-colorWarning {
+    color: #ff9800;
+}
+
+.api-config-page__table .MuiIconButton-root.MuiIconButton-colorError {
+    color: #f44336;
+}
+
+/* Typography dark theme */
+.api-config-page__table .MuiTypography-root {
+    color: var(--tg-theme-text-color);
+}
+
+.api-config-page__table .MuiTypography-colorTextSecondary {
+    color: var(--tg-theme-hint-color);
+}
+
+/* Paper component dark theme */
+.api-config-page__table .MuiPaper-root {
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .api-config-page__header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .api-config-page__table-container {
+        padding: 8px;
+    }
+
+    .api-config-page__table {
+        font-size: 12px;
+    }
+
+    .api-config-page__table .MuiTableCell-root {
+        padding: 8px 4px;
+    }
+
+    .api-config-page__table .MuiIconButton-root {
+        padding: 4px;
+        margin: 1px;
+    }
+}
+
+/* Dark theme enhancements */
+.api-config-page__table .MuiTableContainer-root {
+    background: var(--tg-theme-bg-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Smooth transitions */
+.api-config-page__table .MuiTableRow-root,
+.api-config-page__table .MuiIconButton-root,
+.api-config-page__table .MuiChip-root {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Focus states for accessibility */
+.api-config-page__table .MuiIconButton-root:focus {
+    outline: 2px solid var(--tg-theme-button-color);
+    outline-offset: 2px;
+}
+
+/* Modal styles */
+.api-config-page__modal-content {
+    padding: 16px;
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+    height: 100%;
+    overflow-y: auto;
+}
+
+.api-config-page__modal-title {
+    margin-bottom: 16px;
+    color: var(--tg-theme-text-color);
+    text-align: center;
+}
+
+.api-config-page__modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    padding: 16px 0;
+    border-top: 1px solid var(--tg-theme-hint-color);
+    margin-top: 16px;
+}
+
+/* Form styling */
+.api-config-page__modal-content .Cell {
+    margin-bottom: 16px;
+}
+
+.api-config-page__modal-content .Cell .Text {
+    margin-bottom: 8px;
+    color: var(--tg-theme-text-color);
+}
+
+.api-config-page__modal-content .Input {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.api-config-page__modal-content select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--tg-theme-hint-color);
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+    margin-top: 4px;
+}
+
+.api-config-page__modal-content .Switch {
+    margin-top: 8px;
+}
