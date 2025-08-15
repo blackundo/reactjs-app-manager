@@ -1,0 +1,13 @@
+.tabbar-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+}
+
+.tabbar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    /* Space for tabbar */
+}
