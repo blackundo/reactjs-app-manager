@@ -34,7 +34,7 @@ export const fetchAccounts = async (): Promise<Account[]> => {
     }
 };
 
-// Delete account
+// Delete account huy
 export const deleteAccount = async (id: number): Promise<void> => {
     try {
         const { apiBase, headers } = headersBuilder();
