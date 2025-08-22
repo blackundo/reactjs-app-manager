@@ -12,22 +12,6 @@
     color: var(--tg-theme-text-color);
 }
 
-.api-config-page__add-button {
-    background: var(--tg-theme-button-color);
-    color: var(--tg-theme-button-text-color);
-    border: 1px solid var(--tg-theme-hint-color);
-    font-weight: 600;
-    text-transform: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-}
-
-.api-config-page__add-button:hover {
-    background: var(--tg-theme-button-color);
-    opacity: 0.9;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
 
 .api-config-page__table-container {
     padding: 16px;
@@ -193,13 +177,7 @@
 }
 
 /* Modal styles */
-.api-config-page__modal-content {
-    padding: 16px;
-    background: var(--tg-theme-bg-color);
-    color: var(--tg-theme-text-color);
-    height: 100%;
-    overflow-y: auto;
-}
+
 
 .api-config-page__modal-title {
     margin-bottom: 16px;
@@ -216,34 +194,8 @@
     margin-top: 16px;
 }
 
-/* Form styling */
-.api-config-page__modal-content .Cell {
-    margin-bottom: 16px;
-}
 
-.api-config-page__modal-content .Cell .Text {
-    margin-bottom: 8px;
-    color: var(--tg-theme-text-color);
-}
 
-.api-config-page__modal-content .Input {
-    width: 100%;
-    margin-top: 4px;
-}
-
-.api-config-page__modal-content select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid var(--tg-theme-hint-color);
-    background: var(--tg-theme-bg-color);
-    color: var(--tg-theme-text-color);
-    margin-top: 4px;
-}
-
-.api-config-page__modal-content .Switch {
-    margin-top: 8px;
-}
 
 /* New styles for Telegram UI components */
 .api-config-page__loading-container {

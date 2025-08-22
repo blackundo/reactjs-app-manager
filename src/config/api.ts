@@ -28,6 +28,8 @@ export const API_ENDPOINTS = {
     API_CONFIGS: '/api/api-configs',
     CONFIGS: '/api/configs',
     AUTO: '/api/auto',
+    AUTO_START: '/api/auto/start',
+    AUTO_STOP: '/api/auto',
     SMART_AUTO: '/api/smart-auto',
     SMART_AUTO_START: '/api/smart-auto/start',
     SMART_AUTO_STOP: '/api/smart-auto',

@@ -32,6 +32,11 @@ VITE_DEV_SECRET=123456
 ### Purchase API
 - **POST** `/api/purchase` - Test purchase với API config
 
+### Auto API
+- **GET** `/api/auto` - Lấy danh sách Auto jobs
+- **POST** `/api/auto/start` - Tạo Auto job mới
+- **DELETE** `/api/auto/{jobId}` - Dừng Auto job
+
 ### Smart Auto API
 - **GET** `/api/products/{configId}` - Lấy sản phẩm và categories cho API config
 - **POST** `/api/auto-run` - Chạy Smart Auto một lần
@@ -86,6 +91,30 @@ VITE_DEV_SECRET=123456
 {
   "message": "Test purchase thành công",
   "success_count": 1
+}
+```
+
+#### Auto Start Response
+```json
+{
+  "job_id": "auto_123",
+  "message": "Auto job đã được tạo thành công",
+  "status": "started"
+}
+```
+
+#### Jobs Response
+```json
+{
+  "jobs": [
+    {
+      "id": "auto_123",
+      "name": "Facebook Auto Job",
+      "next_run": "2024-08-16T10:00:00Z",
+      "interval": 300,
+      "status": "running"
+    }
+  ]
 }
 ```
 
@@ -147,6 +176,11 @@ import {
     runSmartAutoOnce,
     stopSmartAutoJob
 } from '@/services/smartAutoService';
+import {
+    startAutoJob,
+    stopAutoJob,
+    refreshJobs as refreshAutoJobs
+} from '@/services/autoService';
 
 // Lấy danh sách accounts
 const accounts = await fetchAccounts();
@@ -175,6 +209,11 @@ const jobs = await refreshJobs();
 const smartAutoResult = await runSmartAutoOnce(config);
 const scheduledJob = await startSmartAutoScheduled(config);
 await stopSmartAutoJob(jobId);
+
+// Auto operations
+const autoJob = await startAutoJob({ api_config_id: configId, product_id: "product_001" });
+await stopAutoJob(jobId);
+const autoJobs = await refreshAutoJobs();
 ```
 
 ## Headers tự động

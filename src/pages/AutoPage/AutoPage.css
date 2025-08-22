@@ -68,3 +68,24 @@
     text-align: center;
     color: var(--tg-theme-hint-color);
 }
+
+.auto-page__error-section {
+    padding: 16px;
+}
+
+.auto-page__error-text {
+    color: #f44336;
+    font-size: 14px;
+    text-align: center;
+}
+
+.auto-page__job-name {
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+    font-size: 14px;
+}
+
+.auto-page__job-interval {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}

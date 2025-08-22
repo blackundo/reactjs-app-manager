@@ -1,0 +1,89 @@
+.snackbar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    /* transform: translateX(-50%); */
+    z-index: 1000;
+    min-width: 300px;
+    max-width: 90vw;
+    border-radius: 10px;
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
+    /* animation: slideIn 0.3s ease-out; */
+}
+
+.snackbar__content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+}
+
+
+
+.snackbar__icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.snackbar__message {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+/* Type variants */
+.snackbar--success {
+    background: #4CAF50;
+    color: white;
+}
+
+.snackbar--error {
+    background-color: #F44336;
+    color: white;
+}
+
+.snackbar--warning {
+    background-color: #FF9800;
+    color: white;
+}
+
+.snackbar--info {
+    background-color: #2196F3;
+    color: white;
+}
+
+/* Animation */
+@keyframes slideIn {
+    from {
+        transform: translateX(-50%) translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .snackbar {
+        min-width: 280px;
+        left: 20px;
+        right: 20px;
+        transform: none;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+}

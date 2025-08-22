@@ -4,6 +4,8 @@ import type { FC } from 'react';
 
 import { Page } from '@/components/Page.tsx';
 import { bem } from '@/css/bem.ts';
+import { fetchApiConfigsList } from '@/services/apiConfigService';
+import { refreshJobs, startAutoJob, stopAutoJob } from '@/services/autoService';
 
 import './AutoPage.css';
 
@@ -12,87 +14,127 @@ const [, e] = bem('auto-page');
 interface Job {
     id: string;
     next_run?: string;
+    name?: string;
+    interval?: number;
 }
 
 interface ApiConfig {
+    id: number;
     name: string;
-    interval: number;
-    needs_id?: boolean;
+    version: 'version_1' | 'version_2';
+    domain: string;
+    enabled: boolean;
 }
 
 export const AutoPage: FC = () => {
-    const [autoApi, setAutoApi] = useState('mmo');
+    const [autoApi, setAutoApi] = useState('');
     const [autoId, setAutoId] = useState('');
-    const [apiConfigs] = useState<Record<string, ApiConfig>>({});
-    const [jobs] = useState<Job[]>([]);
+    const [apiConfigs, setApiConfigs] = useState<ApiConfig[]>([]);
+    const [jobs, setJobs] = useState<Job[]>([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchApiConfigs();
-        refreshJobs();
+        loadJobs();
     }, []);
 
     const fetchApiConfigs = async () => {
         try {
-            // TODO: Implement API call
-            // const response = await getApiConfigs();
-            // setApiConfigs(response.data.configs || {});
+            const data = await fetchApiConfigsList();
+            // Chỉ lấy các config đã enabled
+            const enabledConfigs = data.filter(config => config.enabled);
+            setApiConfigs(enabledConfigs);
+
+            // Set default API nếu chưa có
+            if (enabledConfigs.length > 0 && !autoApi) {
+                setAutoApi(enabledConfigs[0].id.toString());
+            }
         } catch (err) {
             console.error('Error fetching API configs:', err);
+            setError('Không thể tải danh sách API configs');
         }
     };
 
-    const refreshJobs = async () => {
+    const loadJobs = async () => {
         try {
-            // TODO: Implement API call
-            // const response = await getJobs();
-            // const allJobs = response.data.jobs || [];
-            // const regularJobs = allJobs.filter(job => !job.id.startsWith('smart-auto-'));
-            // setJobs(regularJobs);
+            const response = await refreshJobs();
+            const allJobs = response.jobs || [];
+            // Tách Smart Auto jobs và regular jobs
+            const regularJobs = allJobs.filter((job: Job) => !job.id.startsWith('smart-auto-'));
+            setJobs(regularJobs);
         } catch (err) {
             console.error('Error refreshing jobs:', err);
+            setError('Không thể tải danh sách jobs');
         }
     };
 
     const startAuto = async () => {
+        if (!autoApi) {
+            alert('Vui lòng chọn API');
+            return;
+        }
+
         try {
             setLoading(true);
-            const config = apiConfigs[autoApi];
+            setError(null);
+
+            const config = apiConfigs.find(c => c.id.toString() === autoApi);
             if (!config) {
                 alert('API không hợp lệ');
                 return;
             }
 
-            if (config.needs_id && !autoId) {
+            // Kiểm tra xem API có cần Product ID không
+            // Version 2 thường cần Product ID
+            const needsId = config.version === 'version_2';
+            if (needsId && !autoId.trim()) {
                 alert('API này cần Product ID');
                 return;
             }
 
-            // TODO: Implement API call with payload
-            // const payload = {
-            //     api: autoApi,
-            //     id: autoId || null
-            // };
+            const payload = {
+                api_config_id: parseInt(autoApi),
+                product_id: autoId.trim() || null
+            };
 
-            // TODO: Implement API call
-            // const response = await startAutoJob(payload);
-            alert(`Đã tạo job auto: ${autoApi} (${config.interval}s)`);
-            await refreshJobs();
+            const response = await startAutoJob(payload);
+            alert(`Đã tạo job auto thành công! Job ID: ${response.job_id || 'N/A'}`);
+
+            // Reset form
+            setAutoId('');
+
+            // Refresh jobs list
+            await loadJobs();
         } catch (err) {
-            alert('Lỗi start auto');
+            const errorMessage = err instanceof Error ? err.message : 'Lỗi start auto';
+            alert(errorMessage);
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
     };
 
-    const stopJob = async (_jobId: string) => {
-        try {
-            // TODO: Implement API call
-            // await stopJobById(jobId);
-            await refreshJobs();
-        } catch (err) {
-            alert('Lỗi stop job');
+    const stopJob = async (jobId: string) => {
+        if (!window.confirm('Bạn có chắc muốn dừng job này?')) {
+            return;
         }
+
+        try {
+            setError(null);
+            await stopAutoJob(jobId);
+            alert('Job đã được dừng thành công');
+            await loadJobs();
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Lỗi khi dừng job';
+            alert(errorMessage);
+            setError(errorMessage);
+        }
+    };
+
+    const handleApiChange = (apiId: string) => {
+        setAutoApi(apiId);
+        setAutoId(''); // Reset Product ID khi đổi API
     };
 
     return (
@@ -101,15 +143,16 @@ export const AutoPage: FC = () => {
                 <Section header="Auto Configuration">
                     <Cell className={e('config-section')}>
                         <div className={e('config-content')}>
-                            <Text className={e('config-label')}>API</Text>
+                            <Text className={e('config-label')}>Chọn API</Text>
                             <Select
                                 value={autoApi}
-                                onChange={(e) => setAutoApi(e.target.value)}
+                                onChange={(e) => handleApiChange(e.target.value)}
                                 className={e('config-select')}
                             >
-                                {Object.entries(apiConfigs).map(([key, config]) => (
-                                    <option key={key} value={key}>
-                                        {config.name} ({config.interval}s)
+                                <option value="">-- Chọn API --</option>
+                                {apiConfigs.map((config) => (
+                                    <option key={config.id} value={config.id.toString()}>
+                                        {config.name} ({config.version === 'version_1' ? 'V1' : 'V2'}) - {config.domain}
                                     </option>
                                 ))}
                             </Select>
@@ -122,22 +165,31 @@ export const AutoPage: FC = () => {
                             <Input
                                 value={autoId}
                                 onChange={(e) => setAutoId(e.target.value)}
-                                placeholder="Nhập Product ID"
-                                disabled={!apiConfigs[autoApi]?.needs_id}
+                                placeholder="Nhập Product ID (nếu cần)"
                                 className={e('config-input')}
                             />
                             <Text className={e('config-help')}>
-                                {apiConfigs[autoApi]?.needs_id ? "Bắt buộc" : "Không cần"}
+                                {(() => {
+                                    const config = apiConfigs.find(c => c.id.toString() === autoApi);
+                                    if (!config) return "Chọn API trước";
+                                    return config.version === 'version_2' ? "Bắt buộc cho Version 2" : "Tùy chọn cho Version 1";
+                                })()}
                             </Text>
                         </div>
                     </Cell>
+
+                    {error && (
+                        <Cell className={e('error-section')}>
+                            <Text className={e('error-text')}>{error}</Text>
+                        </Cell>
+                    )}
 
                     <Cell className={e('action-section')}>
                         <Button
                             mode="filled"
                             size="l"
                             onClick={startAuto}
-                            disabled={loading}
+                            disabled={loading || !autoApi}
                             className={e('start-btn')}
                         >
                             {loading ? 'Đang xử lý...' : 'Start Auto'}
@@ -150,10 +202,10 @@ export const AutoPage: FC = () => {
                         <Button
                             mode="outline"
                             size="m"
-                            onClick={refreshJobs}
+                            onClick={loadJobs}
                             className={e('refresh-btn')}
                         >
-                            Refresh Jobs
+                            🔄 Refresh Jobs
                         </Button>
                     </Cell>
 
@@ -163,9 +215,17 @@ export const AutoPage: FC = () => {
                                 <div className={e('job-content')}>
                                     <div className={e('job-info')}>
                                         <Text className={e('job-id')}>{job.id}</Text>
+                                        {job.name && (
+                                            <Text className={e('job-name')}>{job.name}</Text>
+                                        )}
                                         <Text className={e('job-next')}>
-                                            Next: {job.next_run || 'N/A'}
+                                            Next run: {job.next_run ? new Date(job.next_run).toLocaleString('vi-VN') : 'N/A'}
                                         </Text>
+                                        {job.interval && (
+                                            <Text className={e('job-interval')}>
+                                                Interval: {job.interval}s
+                                            </Text>
+                                        )}
                                     </div>
                                     <Button
                                         mode="outline"
@@ -173,7 +233,7 @@ export const AutoPage: FC = () => {
                                         onClick={() => stopJob(job.id)}
                                         className={e('stop-btn')}
                                     >
-                                        Stop
+                                        Dừng
                                     </Button>
                                 </div>
                             </Cell>

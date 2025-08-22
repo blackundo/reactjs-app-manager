@@ -80,6 +80,35 @@ src/pages/
 - Telegram WebApp: `x-telegram-init-data`
 - Development: `x-dev-admin-id` và `x-dev-secret`
 
+## [2024-08-15] - Tích hợp Auto API
+
+### Thêm mới
+- **Auto Service**: File `src/services/autoService.ts` để gọi API Auto
+- **Auto Interfaces**: TypeScript interfaces cho Auto operations
+- **Job Management**: Quản lý Auto jobs (start, stop, refresh)
+
+### Cập nhật
+- **AutoPage**: 
+  - Tích hợp với backend API thay vì mock data
+  - Lấy danh sách API configs qua `GET /api/api-configs`
+  - Tạo Auto job qua `POST /api/auto/start`
+  - Dừng Auto job qua `DELETE /api/auto/{jobId}`
+  - Refresh jobs qua `GET /api/auto`
+  - Loading state và error handling
+  - Validation theo version API (V1/V2)
+
+### Logic từ App.js
+- **API Config Loading**: Load danh sách API configs đã enabled
+- **Version-based Validation**: Version 2 cần Product ID, Version 1 tùy chọn
+- **Job Filtering**: Tách biệt Auto jobs và Smart Auto jobs
+- **Error Handling**: Xử lý lỗi và hiển thị thông báo
+- **Form Reset**: Reset form sau khi tạo job thành công
+
+### API Endpoints
+- `GET /api/auto` - Lấy danh sách jobs
+- `POST /api/auto/start` - Tạo Auto job mới
+- `DELETE /api/auto/{jobId}` - Dừng Auto job
+
 ## [2024-08-15] - Tích hợp Smart Auto API
 
 ### Thêm mới
