@@ -1,5 +1,5 @@
 import { Snackbar as TelegramSnackbar } from '@telegram-apps/telegram-ui';
-import { useState, useEffect, type FC, type ReactNode } from 'react';
+import { useState, useEffect, type FC } from 'react';
 
 import './Snackbar.css';
 

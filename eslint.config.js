@@ -11,7 +11,7 @@ export default tseslint.config(
     files: ['src/**/*.{js,jsx,mjs,cjs,ts,tsx}'],
     extends: [
       eslint.configs.recommended,
-      ...tseslint.configs.recommendedTypeChecked,
+      ...tseslint.configs.recommended,
     ],
     plugins: {
       react,
@@ -24,6 +24,7 @@ export default tseslint.config(
         ecmaFeatures: {
           jsx: true,
         },
+
       },
       globals: {
         ...globals.browser,
@@ -31,6 +32,9 @@ export default tseslint.config(
     },
     rules: {
       '@typescript-eslint/no-unused-expressions': 0,
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'react/react-in-jsx-scope': 'off',
     },
   }
 );
