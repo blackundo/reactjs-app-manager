@@ -39,4 +39,5 @@ export const API_ENDPOINTS = {
     UPLOAD_XML: '/api/upload/xml',
     PRODUCTS: '/api/products',
     PURCHASE: '/api/purchase',
+    CHECK_ALL_BALANCES: '/api/check-all-balances',
 } as const;
