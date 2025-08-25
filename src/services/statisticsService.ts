@@ -24,85 +24,50 @@ export interface BalanceResponse {
 
 export const getStatistics = async (): Promise<StatisticsData> => {
     try {
-        // Kiểm tra nếu đang chạy trong Telegram WebApp
-        const isTelegramWebApp = !!(window as any)?.Telegram?.WebApp;
-
-        // Trong Telegram WebApp, chúng ta cần xử lý CORS carefully
+        // Sử dụng proxy trong development mode, URL trực tiếp trong production
         const apiUrl = import.meta.env.DEV
             ? '/api/check-tai-nguyen.php'  // Proxy trong dev mode
-            : isTelegramWebApp
-                ? `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888'}/api/check-tai-nguyen-proxy`  // Proxy qua backend trong Telegram
-                : 'https://spin.modundo.com/api/check-tai-nguyen.php'; // Direct URL trong production
-
-        console.log('Fetching statistics from:', apiUrl);
+            : 'https://spin.modundo.com/api/check-tai-nguyen.php'; // Direct URL trong production
 
         const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
-                'Accept': 'application/json',
-                'Cache-Control': 'no-cache',
+                'Content-Type': 'application/json',
             },
+            // Fallback với no-cors nếu cần
             mode: 'cors',
-            credentials: 'omit', // Không gửi credentials để tránh CORS issues
         });
 
         if (!response.ok) {
-            console.warn(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data: StatisticsData = await response.json();
-        console.log('Statistics data received:', data);
         return data;
     } catch (error) {
         console.error('Error fetching statistics:', error);
 
-        // Trong trường hợp lỗi CORS, trả về dữ liệu từ websearch kết quả
-        if (error instanceof TypeError && (error.message.includes('CORS') || error.message.includes('network'))) {
-            console.warn('CORS/Network error detected, using fallback data');
+        // Fallback với no-cors mode nếu CORS vẫn fail
+        if (error instanceof TypeError && error.message.includes('CORS')) {
+            try {
+                const fallbackUrl = import.meta.env.DEV
+                    ? '/api/check-tai-nguyen.php'
+                    : 'https://spin.modundo.com/api/check-tai-nguyen.php';
 
-            // Dữ liệu fallback từ kết quả websearch
-            const fallbackData: StatisticsData = {
-                clone_fb: "0",
-                clone_cm: "2120",
-                status: "2000",
-                order: "4"
-            };
+                await fetch(fallbackUrl, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                });
 
-            return fallbackData;
+                // Với no-cors, chúng ta không thể đọc response content
+                // Nên trả về dữ liệu mock hoặc throw error
+                throw new Error('CORS issue - unable to fetch data');
+            } catch (fallbackError) {
+                console.error('Fallback request also failed:', fallbackError);
+            }
         }
 
-        // Thử với no-cors mode như là last resort
-        try {
-            console.log('Trying no-cors mode...');
-            const fallbackUrl = import.meta.env.DEV
-                ? '/api/check-tai-nguyen.php'
-                : 'https://spin.modundo.com/api/check-tai-nguyen.php';
-
-            await fetch(fallbackUrl, {
-                method: 'GET',
-                mode: 'no-cors',
-            });
-
-            // Với no-cors, không thể đọc response, sử dụng fallback data
-            console.warn('Using fallback data due to no-cors limitation');
-            return {
-                clone_fb: "0",
-                clone_cm: "2120",
-                status: "2000",
-                order: "4"
-            };
-        } catch (fallbackError) {
-            console.error('Fallback request also failed:', fallbackError);
-
-            // Cuối cùng, trả về dữ liệu mặc định
-            return {
-                clone_fb: "0",
-                clone_cm: "0",
-                status: "offline",
-                order: "0"
-            };
-        }
+        throw error;
     }
 };
 
