@@ -1,21 +1,26 @@
-import { Section, Cell, List, Title, Text, Avatar, Badge } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Text, Avatar, Badge } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
+import { useSignal, isMiniAppDark } from '@telegram-apps/sdk-react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import { Page } from '@/components/Page.tsx';
-import { bem } from '@/css/bem.ts';
 import { getStatistics, StatisticsData, getAllBalances, BalanceResponse } from '@/services/statisticsService.ts';
+
+
 
 import './StatisticsPage.css';
 
-const [, e] = bem('statistics-page');
+
+
 
 export const StatisticsPage: FC = () => {
     const [statistics, setStatistics] = useState<StatisticsData | null>(null);
     const [balances, setBalances] = useState<BalanceResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
+    const isDark = useSignal(isMiniAppDark);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -40,12 +45,47 @@ export const StatisticsPage: FC = () => {
         fetchData();
     }, []);
 
+    const StatisticsSkeleton = () => (
+        <SkeletonTheme
+            baseColor={isDark ? "#2a2f3a" : "#e9edf3"}
+            highlightColor={isDark ? "#3a4050" : "#f7f9fc"}
+        >
+            <Section header="Chỉ số hoạt động">
+                <Cell
+                    before={<Skeleton circle height={48} width={48} />}
+                    after={<Skeleton width={60} height={32} borderRadius={16} />}
+                >
+                    <Skeleton width={120} height={16} />
+                </Cell>
+                <Cell
+                    before={<Skeleton circle height={48} width={48} />}
+                    after={<Skeleton width={60} height={32} borderRadius={16} />}
+                >
+                    <Skeleton width={140} height={16} />
+                </Cell>
+                <Cell
+                    before={<Skeleton circle height={48} width={48} />}
+                    after={<Skeleton width={60} height={32} borderRadius={16} />}
+                >
+                    <Skeleton width={80} height={16} />
+                </Cell>
+            </Section>
+            <Section header="Tổng Balance API">
+                {[...Array(4)].map((_, index) => (
+                    <Cell key={index} after={<Skeleton width={100} height={32} borderRadius={16} />}>
+                        <Skeleton width={150} height={16} />
+                    </Cell>
+                ))}
+            </Section>
+        </SkeletonTheme>
+    );
+
     if (loading) {
         return (
             <Page back={false}>
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-                    <Text>Đang tải dữ liệu...</Text>
-                </div>
+                <List>
+                    <StatisticsSkeleton />
+                </List>
             </Page>
         );
     }
@@ -125,32 +165,27 @@ export const StatisticsPage: FC = () => {
 
                 <Section header="Tổng Balance API">
                     {balances?.results?.map((balance) => (
-                        <Cell key={balance.id} className={e('balance-item')}>
-                            <div className={e('balance-content')}>
-                                <div className={e('balance-info')}>
-                                    <Title level="3">{balance.name}</Title>
-                                    <Text className={e('balance-amount')}>
-                                        {balance.balance.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                        <Cell
+                            key={balance.id}
+                            after={<Badge
+                                type="number"
+                                large
+                                mode="primary"
+                            >
+                                {balance.balance.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                {balance.status === 'error' && (
+                                    <Text style={{ color: 'red', fontSize: '12px' }}>
+                                        {balance.message}
                                     </Text>
-                                    {balance.status === 'error' && (
-                                        <Text style={{ color: 'red', fontSize: '12px' }}>
-                                            {balance.message}
-                                        </Text>
-                                    )}
-                                </div>
-                                <div className={e('balance-status')}>
-                                    <span className={e('status-indicator', balance.status === 'success' ? 'active' : 'error')}></span>
-                                </div>
-                            </div>
+                                )}
+                            </Badge>}
+                        >
+                            {balance.name}
                         </Cell>
                     ))}
                     {(!balances?.results || balances.results.length === 0) && (
-                        <Cell className={e('balance-item')}>
-                            <div className={e('balance-content')}>
-                                <div className={e('balance-info')}>
-                                    <Text>Không có cấu hình API nào được kích hoạt</Text>
-                                </div>
-                            </div>
+                        <Cell>
+                            Không có cấu hình API nào được kích hoạt
                         </Cell>
                     )}
                 </Section>
