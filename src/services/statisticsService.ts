@@ -73,8 +73,8 @@ export const getStatistics = async (): Promise<StatisticsData> => {
 
 export const getAllBalances = async (): Promise<BalanceResponse> => {
     try {
-        const { apiBase, headers } = await import('@/config/api.ts').then(m => m.headersBuilder());
-        const { API_ENDPOINTS } = await import('@/config/api.ts');
+        const { headersBuilder, API_ENDPOINTS } = await import('@/config/api.ts');
+        const { apiBase, headers } = headersBuilder();
 
         const response = await fetch(`${apiBase}${API_ENDPOINTS.CHECK_ALL_BALANCES}`, {
             method: 'POST',
