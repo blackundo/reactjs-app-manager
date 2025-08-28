@@ -35,14 +35,19 @@ class AuthService {
             if (initDataRaw && typeof initDataRaw === 'string' && initDataRaw.trim() !== '') {
                 console.log('✅ AuthService - Using Telegram initData');
                 headers['x-telegram-init-data'] = initDataRaw;
-            } else if (import.meta.env.DEV) {
-                // CHỈ sử dụng dev headers trong development mode
-                console.log('🔧 AuthService - DEV mode: Using dev headers');
+            } else if (import.meta.env.DEV ||
+                window.location.hostname === 'localhost' ||
+                window.location.hostname === '127.0.0.1' ||
+                new URLSearchParams(window.location.search).has('debug_mode')) {
+                // Sử dụng dev headers trong development mode, localhost, hoặc với ?debug_mode parameter
+                console.log('🔧 AuthService - DEV/Local/Debug mode: Using dev headers');
                 headers['x-dev-admin-id'] = '5168993511';
                 headers['x-dev-secret'] = '123456';
             } else {
-                // Production mode nhưng không có initData - đây là lỗi
+                // Production mode thật sự - yêu cầu initData
                 console.error('❌ AuthService - PRODUCTION mode but no initData available!');
+                console.error('Current hostname:', window.location.hostname);
+                console.error('Please open this app from Telegram or use localhost for testing');
                 throw new Error('Không có dữ liệu xác thực từ Telegram. Vui lòng mở ứng dụng từ Telegram.');
             }
 
@@ -50,16 +55,20 @@ class AuthService {
         } catch (error) {
             console.warn('❌ AuthService - Failed to get Telegram launch params:', error);
 
-            // Chỉ fallback về dev headers trong development
-            if (import.meta.env.DEV) {
-                console.log('🔧 AuthService - DEV fallback: Using dev headers');
+            // Fallback về dev headers trong development, localhost, hoặc debug mode
+            if (import.meta.env.DEV ||
+                window.location.hostname === 'localhost' ||
+                window.location.hostname === '127.0.0.1' ||
+                new URLSearchParams(window.location.search).has('debug_mode')) {
+                console.log('🔧 AuthService - DEV/Local/Debug fallback: Using dev headers');
                 return {
                     'Content-Type': 'application/json',
                     'x-dev-admin-id': '5168993511',
                     'x-dev-secret': '123456',
                 };
             } else {
-                // Production: throw error thay vì fallback
+                // Production thật sự: throw error
+                console.error('Production error - hostname:', window.location.hostname);
                 throw new Error('Lỗi xác thực. Vui lòng mở ứng dụng từ Telegram.');
             }
         }
