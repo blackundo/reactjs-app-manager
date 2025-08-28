@@ -7,7 +7,6 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 import { Page } from '@/components/Page.tsx';
 import { getStatistics, StatisticsData, getAllBalances, BalanceResponse } from '@/services/statisticsService.ts';
-import { useUser } from '@/components/AuthGuard.tsx';
 
 
 
@@ -22,7 +21,6 @@ export const StatisticsPage: FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const isDark = useSignal(isMiniAppDark);
-    const userInfo = useUser();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -52,14 +50,6 @@ export const StatisticsPage: FC = () => {
             baseColor={isDark ? "#2a2f3a" : "#e9edf3"}
             highlightColor={isDark ? "#3a4050" : "#f7f9fc"}
         >
-            <Section header="Thông tin tài khoản">
-                <Cell
-                    before={<Skeleton circle height={48} width={48} />}
-                    after={<Skeleton width={60} height={32} borderRadius={16} />}
-                >
-                    <Skeleton width={120} height={16} />
-                </Cell>
-            </Section>
             <Section header="Chỉ số hoạt động">
                 <Cell
                     before={<Skeleton circle height={48} width={48} />}
@@ -110,43 +100,9 @@ export const StatisticsPage: FC = () => {
         );
     }
 
-    const generateAvatarFromName = (firstName: string, lastName: string) => {
-        const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-        return initials || '👤';
-    };
-
-    const formatUserName = (firstName: string, lastName: string, username: string) => {
-        const fullName = `${firstName} ${lastName}`.trim();
-        return fullName || username || 'Không có tên';
-    };
-
     return (
         <Page back={false}>
             <List>
-                <Section header="Thông tin tài khoản">
-                    <Cell
-                        before={
-                            userInfo?.photo_url ? (
-                                <Avatar size={48} src={userInfo.photo_url} />
-                            ) : (
-                                <Avatar size={48}>
-                                    {generateAvatarFromName(userInfo?.first_name || '', userInfo?.last_name || '')}
-                                </Avatar>
-                            )
-                        }
-                        after={
-                            <Badge mode="primary" type="dot">
-                                Admin
-                            </Badge>
-                        }
-                        subtitle={userInfo?.username ? `@${userInfo.username}` : `ID: ${userInfo?.id}`}
-                        titleBadge={<Badge mode="primary" type="dot" />}
-                        interactiveAnimation="opacity"
-                    >
-                        {formatUserName(userInfo?.first_name || '', userInfo?.last_name || '', userInfo?.username || '')}
-                    </Cell>
-                </Section>
-
                 <Section header="Chỉ số hoạt động">
                     <Cell
                         after={<Badge

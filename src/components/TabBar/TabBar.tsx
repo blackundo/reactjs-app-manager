@@ -1,6 +1,6 @@
 import { Tabbar } from '@telegram-apps/telegram-ui';
 import { useState, useRef, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import type { FC } from 'react';
 
 import { StatisticsPage } from '@/pages/StatisticsPage/StatisticsPage';
@@ -110,5 +110,9 @@ const TabBarContent: FC = () => {
 };
 
 export const TabBar: FC = () => {
-    return <TabBarContent />;
+    return (
+        <HashRouter>
+            <TabBarContent />
+        </HashRouter>
+    );
 };
