@@ -15,6 +15,7 @@ import { AutoPage } from '@/pages/AutoPage/AutoPage';
 import { SmartAutoPage } from '@/pages/SmartAutoPage/SmartAutoPage';
 import { RunsPage } from '@/pages/RunsPage/RunsPage';
 import { DebugPage } from '@/pages/DebugPage/DebugPage';
+import { AdminPage } from '@/pages/AdminPage/AdminPage';
 
 import './TabBar.css';
 
@@ -81,6 +82,7 @@ const TabBarContent: FC = () => {
                     <Route path="/theme-params" element={<ThemeParamsPage />} />
                     <Route path="/account" element={<AccountPage />} />
                     <Route path="/api-config" element={<ApiConfigPage />} />
+                    <Route path="/admin" element={<AdminPage />} />
                     <Route path="/upload" element={<UploadPage />} />
                     <Route path="/auto" element={<AutoPage />} />
                     <Route path="/smart-auto" element={<SmartAutoPage />} />

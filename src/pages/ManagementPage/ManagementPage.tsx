@@ -28,6 +28,9 @@ export const ManagementPage: FC = () => {
                     </Link>
                 </Section>
                 <Section header="Quản lý API">
+                    <Link to="/admin">
+                        <Cell subtitle="Quản lý danh sách admin">Admin</Cell>
+                    </Link>
                     <Link to="/api-config">
                         <Cell subtitle="Quản lý cấu hình API">API Config</Cell>
                     </Link>
