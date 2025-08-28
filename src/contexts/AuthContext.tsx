@@ -2,9 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import {
     verifyUser,
     storeAuthData,
-    getStoredUserInfo,
     clearAuthData,
-    isAuthenticated,
     UserInfo,
     AuthResponse
 } from '@/services/authService';
