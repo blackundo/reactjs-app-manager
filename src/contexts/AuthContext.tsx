@@ -78,23 +78,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                if (isAuthenticated()) {
-                    const storedUser = getStoredUserInfo();
-                    if (storedUser) {
-                        setUser(storedUser);
-                        setIsAuthorized(true);
-                        setIsLoading(false);
-                        return;
-                    }
-                }
-
-                // Nếu không có stored data hoặc invalid, thử verify lại
+                // Luôn verify với server để đảm bảo quyền thực tế
+                // Không dựa vào localStorage để tăng tính bảo mật
+                console.log('[AUTH] Starting fresh authentication check...');
                 await login();
             } catch (error) {
                 // Login failed, user sẽ thấy error screen
+                console.error('[AUTH] Authentication failed:', error);
                 setIsLoading(false);
                 setIsAuthorized(false);
                 setUser(null);
+                clearAuthData(); // Clear any stale data
             }
         };
 
