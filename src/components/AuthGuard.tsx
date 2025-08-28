@@ -42,6 +42,17 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
 
                 const user = await authService.getCurrentUser();
                 console.log('✅ Debug AuthGuard - Auth success:', user);
+
+                // Log user ID để thêm vào database
+                if (user.id !== 5168993511) {
+                    console.log(`🆔 ADD THIS USER TO ADMIN DATABASE:`);
+                    console.log(`curl -X POST ${import.meta.env.DEV ? 'http://localhost:8888' : 'https://miniapp.modundo.com'}/api/admin-users \\`);
+                    console.log(`-H "Content-Type: application/json" \\`);
+                    console.log(`-H "x-dev-admin-id: 5168993511" \\`);
+                    console.log(`-H "x-dev-secret: 123456" \\`);
+                    console.log(`-d '{"telegram_id": "${user.id}", "first_name": "${user.first_name}", "last_name": "${user.last_name}", "username": "${user.username}"}'`);
+                }
+
                 setUserInfo(user);
                 setIsAuthorized(true);
                 setError(null);

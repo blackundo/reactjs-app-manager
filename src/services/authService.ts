@@ -35,22 +35,33 @@ class AuthService {
             if (initDataRaw && typeof initDataRaw === 'string' && initDataRaw.trim() !== '') {
                 console.log('✅ AuthService - Using Telegram initData');
                 headers['x-telegram-init-data'] = initDataRaw;
-            } else {
-                console.log('⚠️ AuthService - No valid initData, using dev headers');
-                // For Telegram Web Desktop or when no initData is available, force dev mode
-                console.log('🔧 AuthService - Forcing dev admin access for Telegram Web Desktop');
+            } else if (import.meta.env.DEV) {
+                // CHỈ sử dụng dev headers trong development mode
+                console.log('🔧 AuthService - DEV mode: Using dev headers');
                 headers['x-dev-admin-id'] = '5168993511';
                 headers['x-dev-secret'] = '123456';
+            } else {
+                // Production mode nhưng không có initData - đây là lỗi
+                console.error('❌ AuthService - PRODUCTION mode but no initData available!');
+                throw new Error('Không có dữ liệu xác thực từ Telegram. Vui lòng mở ứng dụng từ Telegram.');
             }
 
             return headers;
         } catch (error) {
-            console.warn('❌ AuthService - Failed to get Telegram launch params, using dev headers:', error);
-            return {
-                'Content-Type': 'application/json',
-                'x-dev-admin-id': '5168993511',
-                'x-dev-secret': '123456',
-            };
+            console.warn('❌ AuthService - Failed to get Telegram launch params:', error);
+
+            // Chỉ fallback về dev headers trong development
+            if (import.meta.env.DEV) {
+                console.log('🔧 AuthService - DEV fallback: Using dev headers');
+                return {
+                    'Content-Type': 'application/json',
+                    'x-dev-admin-id': '5168993511',
+                    'x-dev-secret': '123456',
+                };
+            } else {
+                // Production: throw error thay vì fallback
+                throw new Error('Lỗi xác thực. Vui lòng mở ứng dụng từ Telegram.');
+            }
         }
     }
 
