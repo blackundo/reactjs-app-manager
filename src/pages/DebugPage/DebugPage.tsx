@@ -19,7 +19,7 @@ export const DebugPage: FC = () => {
         try {
             setLoading(true);
             setError(null);
-            const result = await verifyUser();
+            const result = await verifyUser(initData);
             setAuthResult(result);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Unknown error');

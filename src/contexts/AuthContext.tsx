@@ -9,6 +9,7 @@ import {
     AuthResponse
 } from '@/services/authService';
 import { useSnackbar } from '@/components/Snackbar/useSnackbar';
+import { useInitData } from '@/hooks/useInitData';
 
 interface AuthContextType {
     user: UserInfo | null;
@@ -29,12 +30,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthorized, setIsAuthorized] = useState(false);
     const { showSnackbar } = useSnackbar();
+    const { initData } = useInitData();
 
     // Function để thực hiện login
     const login = async (): Promise<void> => {
         try {
             setIsLoading(true);
-            const authData: AuthResponse = await verifyUser();
+            const authData: AuthResponse = await verifyUser(initData);
 
             storeAuthData(authData);
             setUser(authData.user);
