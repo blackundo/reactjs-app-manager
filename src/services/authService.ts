@@ -22,7 +22,7 @@ export const verifyUser = async (): Promise<AuthResponse> => {
     try {
         // Lấy init data từ Telegram SDK React
         const initData = initDataRaw();
-        
+
         if (initData) {
             console.log('[AUTH Frontend] Using Telegram init data:', initData.slice(0, 100) + '...');
             headers['x-telegram-init-data'] = initData;

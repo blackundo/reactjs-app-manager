@@ -34,9 +34,9 @@ export const DebugPage: FC = () => {
             return {
                 id: initState.user.id,
                 username: initState.user.username,
-                first_name: initState.user.firstName,
-                last_name: initState.user.lastName,
-                photo_url: initState.user.photoUrl
+                first_name: initState.user.first_name,
+                last_name: initState.user.last_name,
+                photo_url: initState.user.photo_url
             };
         }
         return null;
@@ -50,10 +50,10 @@ export const DebugPage: FC = () => {
                 <Section header="🔍 Debug Information">
                     <Cell subtitle="Raw init data từ Telegram SDK">
                         Init Data Raw
-                        <div style={{ 
-                            marginTop: '8px', 
-                            padding: '8px', 
-                            background: 'var(--tg-theme-secondary-bg-color)', 
+                        <div style={{
+                            marginTop: '8px',
+                            padding: '8px',
+                            background: 'var(--tg-theme-secondary-bg-color)',
                             borderRadius: '8px',
                             wordBreak: 'break-all',
                             fontSize: '12px'
@@ -64,10 +64,10 @@ export const DebugPage: FC = () => {
 
                     <Cell subtitle="Parsed user information từ Telegram SDK">
                         User Info
-                        <div style={{ 
-                            marginTop: '8px', 
-                            padding: '8px', 
-                            background: 'var(--tg-theme-secondary-bg-color)', 
+                        <div style={{
+                            marginTop: '8px',
+                            padding: '8px',
+                            background: 'var(--tg-theme-secondary-bg-color)',
                             borderRadius: '8px',
                             fontSize: '12px'
                         }}>
@@ -81,10 +81,10 @@ export const DebugPage: FC = () => {
 
                     <Cell subtitle="Environment variables">
                         Env Vars
-                        <div style={{ 
-                            marginTop: '8px', 
-                            padding: '8px', 
-                            background: 'var(--tg-theme-secondary-bg-color)', 
+                        <div style={{
+                            marginTop: '8px',
+                            padding: '8px',
+                            background: 'var(--tg-theme-secondary-bg-color)',
                             borderRadius: '8px',
                             fontSize: '12px'
                         }}>
@@ -97,9 +97,9 @@ export const DebugPage: FC = () => {
 
                 <Section header="🧪 Test Authentication">
                     <Cell>
-                        <Button 
-                            mode="filled" 
-                            size="l" 
+                        <Button
+                            mode="filled"
+                            size="l"
                             onClick={handleTestAuth}
                             disabled={loading}
                             style={{ width: '100%', marginBottom: '16px' }}
@@ -108,10 +108,10 @@ export const DebugPage: FC = () => {
                         </Button>
 
                         {authResult && (
-                            <div style={{ 
-                                marginTop: '16px', 
-                                padding: '12px', 
-                                background: 'var(--tg-theme-secondary-bg-color)', 
+                            <div style={{
+                                marginTop: '16px',
+                                padding: '12px',
+                                background: 'var(--tg-theme-secondary-bg-color)',
                                 borderRadius: '8px'
                             }}>
                                 <Text style={{ color: 'green', fontWeight: 'bold', marginBottom: '8px' }}>
@@ -124,10 +124,10 @@ export const DebugPage: FC = () => {
                         )}
 
                         {error && (
-                            <div style={{ 
-                                marginTop: '16px', 
-                                padding: '12px', 
-                                background: '#fee', 
+                            <div style={{
+                                marginTop: '16px',
+                                padding: '12px',
+                                background: '#fee',
                                 borderRadius: '8px',
                                 border: '1px solid #fcc'
                             }}>
@@ -150,7 +150,7 @@ export const DebugPage: FC = () => {
                                 <li>Init data sẽ tự động được gửi từ Telegram</li>
                                 <li>User info sẽ chứa thông tin thật từ tài khoản Telegram</li>
                             </ul>
-                            
+
                             <p><strong>Ngoài Telegram (Development):</strong></p>
                             <ul>
                                 <li>Sẽ sử dụng dev bypass với DEV_SECRET</li>

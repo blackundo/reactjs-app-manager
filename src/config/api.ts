@@ -10,7 +10,7 @@ export const headersBuilder = () => {
     try {
         // Get initData from Telegram SDK React
         const initData = initDataRaw();
-        
+
         if (initData) {
             console.log('Using Telegram init data:', initData.slice(0, 50) + '...');
             headers['x-telegram-init-data'] = initData;
