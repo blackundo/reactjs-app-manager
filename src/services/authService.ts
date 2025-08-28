@@ -17,28 +17,35 @@ export interface AuthResponse {
 
 class AuthService {
     private baseUrl = import.meta.env.DEV
-        ? 'https://miniapp.modundo.com'
-        : 'http://localhost:8888';
+        ? 'http://localhost:8888'
+        : 'https://miniapp.modundo.com';
 
     private getHeaders(): HeadersInit {
         try {
             const { initDataRaw } = retrieveLaunchParams();
+            console.log('🔍 AuthService - initDataRaw:', initDataRaw);
+            console.log('🔍 AuthService - initDataRaw type:', typeof initDataRaw);
+            console.log('🔍 AuthService - Is DEV mode:', import.meta.env.DEV);
 
             const headers: HeadersInit = {
                 'Content-Type': 'application/json',
             };
 
-            if (initDataRaw && typeof initDataRaw === 'string') {
+            // Check if we have valid initData
+            if (initDataRaw && typeof initDataRaw === 'string' && initDataRaw.trim() !== '') {
+                console.log('✅ AuthService - Using Telegram initData');
                 headers['x-telegram-init-data'] = initDataRaw;
             } else {
-                // Dev mode headers
+                console.log('⚠️ AuthService - No valid initData, using dev headers');
+                // For Telegram Web Desktop or when no initData is available, force dev mode
+                console.log('🔧 AuthService - Forcing dev admin access for Telegram Web Desktop');
                 headers['x-dev-admin-id'] = '5168993511';
                 headers['x-dev-secret'] = '123456';
             }
 
             return headers;
         } catch (error) {
-            console.warn('Failed to get Telegram launch params, using dev headers:', error);
+            console.warn('❌ AuthService - Failed to get Telegram launch params, using dev headers:', error);
             return {
                 'Content-Type': 'application/json',
                 'x-dev-admin-id': '5168993511',
