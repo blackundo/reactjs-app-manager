@@ -1,3 +1,5 @@
+import { initDataRaw } from '@telegram-apps/sdk-react';
+
 // API Configuration
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888';
 
@@ -5,14 +7,24 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localho
 export const headersBuilder = () => {
     const headers: Record<string, string> = {};
 
-    // Get initData from Telegram WebApp SDK
-    const tg = (window as any).Telegram?.WebApp;
-    const initData = tg?.initData || '';
-
-    if (initData) {
-        headers['x-telegram-init-data'] = initData;
-    } else {
-        // Development mode - use dev credentials
+    try {
+        // Get initData from Telegram SDK React
+        const initData = initDataRaw();
+        
+        if (initData) {
+            console.log('Using Telegram init data:', initData.slice(0, 50) + '...');
+            headers['x-telegram-init-data'] = initData;
+        } else {
+            // Development mode - use dev credentials
+            console.log('No init data found, using dev bypass');
+            const devAdminId = import.meta.env.VITE_DEV_ADMIN_ID || '5168993511';
+            const devSecret = import.meta.env.VITE_DEV_SECRET || '123456';
+            if (devAdminId) headers['x-dev-admin-id'] = devAdminId;
+            if (devSecret) headers['x-dev-secret'] = devSecret;
+        }
+    } catch (error) {
+        console.warn('Error getting init data, falling back to dev mode:', error);
+        // Fallback to development mode
         const devAdminId = import.meta.env.VITE_DEV_ADMIN_ID || '5168993511';
         const devSecret = import.meta.env.VITE_DEV_SECRET || '123456';
         if (devAdminId) headers['x-dev-admin-id'] = devAdminId;

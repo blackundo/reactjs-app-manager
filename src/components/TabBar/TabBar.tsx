@@ -14,6 +14,7 @@ import { UploadPage } from '@/pages/UploadPage/UploadPage';
 import { AutoPage } from '@/pages/AutoPage/AutoPage';
 import { SmartAutoPage } from '@/pages/SmartAutoPage/SmartAutoPage';
 import { RunsPage } from '@/pages/RunsPage/RunsPage';
+import { DebugPage } from '@/pages/DebugPage/DebugPage';
 
 import './TabBar.css';
 
@@ -84,6 +85,7 @@ const TabBarContent: FC = () => {
                     <Route path="/auto" element={<AutoPage />} />
                     <Route path="/smart-auto" element={<SmartAutoPage />} />
                     <Route path="/runs" element={<RunsPage />} />
+                    <Route path="/debug" element={<DebugPage />} />
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
             </div>

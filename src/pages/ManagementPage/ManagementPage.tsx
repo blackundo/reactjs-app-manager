@@ -43,6 +43,17 @@ export const ManagementPage: FC = () => {
                         <Cell subtitle="Xem lịch sử runs">Run History</Cell>
                     </Link>
                 </Section>
+                <Section header="Development">
+                    <Link to="/debug">
+                        <Cell subtitle="Debug init data và authentication">🔍 Debug Page</Cell>
+                    </Link>
+                    <Link to="/init-data">
+                        <Cell subtitle="Telegram init data details">Init Data</Cell>
+                    </Link>
+                    <Link to="/theme-params">
+                        <Cell subtitle="Telegram theme parameters">Theme Params</Cell>
+                    </Link>
+                </Section>
             </List>
         </Page>
     );

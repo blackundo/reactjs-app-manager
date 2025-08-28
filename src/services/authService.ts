@@ -1,4 +1,4 @@
-import { headersBuilder } from '@/config/api.ts';
+import { initDataRaw } from '@telegram-apps/sdk-react';
 
 export interface UserInfo {
     telegram_id: string;
@@ -15,10 +15,39 @@ export interface AuthResponse {
 }
 
 export const verifyUser = async (): Promise<AuthResponse> => {
-    const headers = headersBuilder();
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+    };
+
+    try {
+        // Lấy init data từ Telegram SDK React
+        const initData = initDataRaw();
+        
+        if (initData) {
+            console.log('[AUTH Frontend] Using Telegram init data:', initData.slice(0, 100) + '...');
+            headers['x-telegram-init-data'] = initData;
+        } else {
+            console.log('[AUTH Frontend] No init data found, using dev bypass');
+            // Development mode - use dev credentials
+            const devAdminId = import.meta.env.VITE_DEV_ADMIN_ID || '5168993511';
+            const devSecret = import.meta.env.VITE_DEV_SECRET || '123456';
+            if (devAdminId) headers['x-dev-admin-id'] = devAdminId;
+            if (devSecret) headers['x-dev-secret'] = devSecret;
+        }
+    } catch (error) {
+        console.warn('[AUTH Frontend] Error getting init data, falling back to dev mode:', error);
+        // Fallback to development mode
+        const devAdminId = import.meta.env.VITE_DEV_ADMIN_ID || '5168993511';
+        const devSecret = import.meta.env.VITE_DEV_SECRET || '123456';
+        if (devAdminId) headers['x-dev-admin-id'] = devAdminId;
+        if (devSecret) headers['x-dev-secret'] = devSecret;
+    }
+
+    console.log('[AUTH Frontend] Sending headers:', Object.keys(headers));
+
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/verify`, {
         method: 'POST',
-        headers: headers.headers,
+        headers,
     });
 
     if (!response.ok) {
