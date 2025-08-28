@@ -115,3 +115,51 @@
 .account-page__retry-btn {
     min-width: 120px;
 }
+
+/* Modal styles */
+.account-page__modal-content {
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.account-page__modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--tg-theme-hint-color);
+}
+
+.account-page__modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.account-page__account-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 8px;
+}
+
+.account-page__textarea-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.account-page__textarea-label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--tg-theme-text-color);
+}
+
+.account-page__modal-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}

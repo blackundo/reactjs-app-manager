@@ -1,5 +1,8 @@
-import { Section, Cell, List, Button, Text, Input, Pagination } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Button, Text, Input, Pagination, Modal, Textarea } from '@telegram-apps/telegram-ui';
 import { useState, useMemo, useEffect } from 'react';
+import { useSignal, isMiniAppDark } from '@telegram-apps/sdk-react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import type { FC, ChangeEvent } from 'react';
 
 import { Page } from '@/components/Page.tsx';
@@ -16,9 +19,14 @@ export const AccountPage: FC = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const isDark = useSignal(isMiniAppDark);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+
+    // Modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
 
     // Load accounts on component mount
     useEffect(() => {
@@ -40,10 +48,6 @@ export const AccountPage: FC = () => {
     };
 
     // Helper functions
-    const truncateText = (text: string, maxLength: number = 80) => {
-        if (text.length <= maxLength) return text;
-        return text.substring(0, maxLength) + '...';
-    };
 
     const getStatusColor = (status: Account['status']) => {
         switch (status) {
@@ -112,12 +116,113 @@ export const AccountPage: FC = () => {
         setCurrentPage(page);
     };
 
+    const handleCellClick = (account: Account) => {
+        setSelectedAccount(account);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedAccount(null);
+    };
+
+    const handleCopyAccountInfo = async () => {
+        if (selectedAccount?.info) {
+            try {
+                await navigator.clipboard.writeText(selectedAccount.info);
+                alert('Đã copy thông tin tài khoản!');
+            } catch (err) {
+                console.error('Lỗi khi copy:', err);
+                alert('Không thể copy. Hãy copy thủ công.');
+            }
+        }
+    };
+
+    const AccountSkeleton = () => (
+        <SkeletonTheme
+            baseColor={isDark ? "#2a2f3a" : "#e9edf3"}
+            highlightColor={isDark ? "#3a4050" : "#f7f9fc"}
+        >
+            <div className={e('search-container')}>
+                <div style={{
+                    width: '100%',
+                    height: 48,
+                    borderRadius: 12,
+                    backgroundColor: isDark ? '#2a2f3a' : '#e9edf3',
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '0 16px'
+                }}>
+                    <Skeleton width="40%" height={16} />
+                </div>
+            </div>
+
+            <List>
+                <Section header={<Skeleton width={180} height={20} />}>
+                    {[...Array(ITEMS_PER_PAGE)].map((_, index) => (
+                        <Cell
+                            key={index}
+                            className={e('account-item')}
+                            after={
+                                <div className={e('account-actions')}>
+                                    <div className={e('status-indicator')}>
+                                        <Skeleton circle width={8} height={8} style={{ marginRight: 8 }} />
+                                        <Skeleton width={70} height={14} />
+                                    </div>
+                                    <div className={e('action-buttons')}>
+                                        <div style={{
+                                            width: 70,
+                                            height: 32,
+                                            borderRadius: 8,
+                                            backgroundColor: isDark ? '#3a4050' : '#f7f9fc',
+                                            marginRight: 8
+                                        }}>
+                                            <Skeleton width="100%" height="100%" />
+                                        </div>
+                                        <div style={{
+                                            width: 50,
+                                            height: 32,
+                                            borderRadius: 8,
+                                            backgroundColor: isDark ? '#3a4050' : '#f7f9fc'
+                                        }}>
+                                            <Skeleton width="100%" height="100%" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        >
+                            <div className={e('account-id')}>
+                                <Skeleton width={60} height={18} />
+                            </div>
+                        </Cell>
+                    ))}
+                </Section>
+            </List>
+
+            <div className={e('pagination-container')}>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: 8,
+                    padding: '16px 0'
+                }}>
+                    {[...Array(5)].map((_, index) => (
+                        <Skeleton
+                            key={index}
+                            circle
+                            width={32}
+                            height={32}
+                        />
+                    ))}
+                </div>
+            </div>
+        </SkeletonTheme>
+    );
+
     if (loading) {
         return (
             <Page>
-                <div className={e('loading-container')}>
-                    <Text>Đang tải dữ liệu...</Text>
-                </div>
+                <AccountSkeleton />
             </Page>
         );
     }
@@ -152,11 +257,8 @@ export const AccountPage: FC = () => {
                             <Cell
                                 key={account.id}
                                 className={e('account-item')}
-                                before={
-                                    <div className={e('account-id')}>
-                                        <Text weight="2">#{account.id}</Text>
-                                    </div>
-                                }
+                                onClick={() => handleCellClick(account)}
+                                style={{ cursor: 'pointer' }}
                                 after={
                                     <div className={e('account-actions')}>
                                         <div className={e('status-indicator')}>
@@ -172,7 +274,10 @@ export const AccountPage: FC = () => {
                                             <Button
                                                 size="s"
                                                 mode="outline"
-                                                onClick={() => handleRestart(account.id)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleRestart(account.id);
+                                                }}
                                                 className={e('restart-btn')}
                                             >
                                                 Chạy lại
@@ -180,7 +285,10 @@ export const AccountPage: FC = () => {
                                             <Button
                                                 size="s"
                                                 mode="plain"
-                                                onClick={() => handleDelete(account.id)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDelete(account.id);
+                                                }}
                                                 className={e('delete-btn')}
                                             >
                                                 Xóa
@@ -189,10 +297,9 @@ export const AccountPage: FC = () => {
                                     </div>
                                 }
                             >
-                                <div className={e('account-info')}>
-                                    <Text className={e('info-text')}>
-                                        {truncateText(account.info)}
-                                    </Text>
+                                {/* Không hiển thị account.info ở đây nữa */}
+                                <div className={e('account-id')}>
+                                    <Text weight="2">#{account.id}</Text>
                                 </div>
                             </Cell>
                         ))
@@ -215,6 +322,61 @@ export const AccountPage: FC = () => {
                     />
                 </div>
             )}
+
+            {/* Modal hiển thị thông tin tài khoản */}
+            <Modal
+                open={isModalOpen}
+                onOpenChange={setIsModalOpen}
+                dismissible={true}
+            >
+                <div className={e('modal-content')}>
+                    <div className={e('modal-header')}>
+                        <Text weight="2" style={{ fontSize: '18px' }}>
+                            Thông tin tài khoản #{selectedAccount?.id}
+                        </Text>
+                        <Button
+                            size="s"
+                            mode="outline"
+                            onClick={handleCloseModal}
+                            style={{ marginLeft: 'auto' }}
+                        >
+                            Đóng
+                        </Button>
+                    </div>
+
+                    <div className={e('modal-body')}>
+                        <div className={e('account-status')}>
+                            <Text>Trạng thái: </Text>
+                            <span
+                                className={e('status-dot')}
+                                style={{ backgroundColor: getStatusColor(selectedAccount?.status || 'inactive') }}
+                            />
+                            <Text>{getStatusText(selectedAccount?.status || 'inactive')}</Text>
+                        </div>
+
+                        <div className={e('textarea-container')}>
+                            <Textarea
+                                header="Thông tin tài khoản"
+                                value={selectedAccount?.info || ''}
+                                readOnly
+                                rows={8}
+                                placeholder="Không có thông tin"
+                            />
+                        </div>
+
+                        <div className={e('modal-actions')}>
+                            <Button
+                                size="s"
+                                mode="filled"
+                                onClick={handleCopyAccountInfo}
+                                disabled={!selectedAccount?.info}
+                            >
+                                📋 Copy thông tin
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </Page>
     );
 };
