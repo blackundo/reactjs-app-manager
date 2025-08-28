@@ -3,6 +3,8 @@ import { retrieveLaunchParams, useSignal, isMiniAppDark } from '@telegram-apps/s
 import { AppRoot } from '@telegram-apps/telegram-ui';
 
 import { TabBar } from '@/components/TabBar/TabBar';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthGuard } from '@/components/AuthGuard/AuthGuard';
 
 export function App() {
   const lp = useMemo(() => retrieveLaunchParams(), []);
@@ -13,7 +15,11 @@ export function App() {
       appearance={isDark ? 'dark' : 'light'}
       platform={['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'}
     >
-      <TabBar />
+      <AuthProvider>
+        <AuthGuard>
+          <TabBar />
+        </AuthGuard>
+      </AuthProvider>
     </AppRoot>
   );
 }

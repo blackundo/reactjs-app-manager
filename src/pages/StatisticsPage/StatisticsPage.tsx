@@ -7,8 +7,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 import { Page } from '@/components/Page.tsx';
 import { getStatistics, StatisticsData, getAllBalances, BalanceResponse } from '@/services/statisticsService.ts';
-
-
+import { useAuth } from '@/contexts/AuthContext';
 
 import './StatisticsPage.css';
 
@@ -21,6 +20,7 @@ export const StatisticsPage: FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const isDark = useSignal(isMiniAppDark);
+    const { user } = useAuth();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -50,6 +50,14 @@ export const StatisticsPage: FC = () => {
             baseColor={isDark ? "#2a2f3a" : "#e9edf3"}
             highlightColor={isDark ? "#3a4050" : "#f7f9fc"}
         >
+            <Section header="Thông tin người dùng">
+                <Cell
+                    before={<Skeleton circle height={48} width={48} />}
+                    after={<Skeleton width={50} height={24} borderRadius={12} />}
+                >
+                    <Skeleton width={150} height={16} />
+                </Cell>
+            </Section>
             <Section header="Chỉ số hoạt động">
                 <Cell
                     before={<Skeleton circle height={48} width={48} />}
@@ -100,9 +108,68 @@ export const StatisticsPage: FC = () => {
         );
     }
 
+    // Helper function để lấy display name
+    const getUserDisplayName = () => {
+        if (!user) return 'Unknown User';
+        if (user.first_name && user.last_name) {
+            return `${user.first_name} ${user.last_name}`;
+        }
+        return user.first_name || user.username || `User ${user.telegram_id}`;
+    };
+
+    // Helper function để lấy avatar
+    const getUserAvatar = () => {
+        if (user?.photo_url) {
+            return (
+                <Avatar size={48}>
+                    <img
+                        src={user.photo_url}
+                        alt="Profile"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                </Avatar>
+            );
+        }
+
+        // Fallback avatar với initials
+        const initials = user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U';
+        return (
+            <Avatar size={48}>
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '18px'
+                }}>
+                    {initials.toUpperCase()}
+                </div>
+            </Avatar>
+        );
+    };
+
     return (
         <Page back={false}>
             <List>
+                {/* User Information Section */}
+                <Section header="Thông tin người dùng">
+                    <Cell
+                        before={getUserAvatar()}
+                        after={<Badge
+                            type="dot"
+                            mode="primary"
+                        >
+                            Admin
+                        </Badge>}
+                        subtitle={user?.username ? `@${user.username}` : `ID: ${user?.telegram_id}`}
+                        interactiveAnimation="opacity"
+                    >
+                        {getUserDisplayName()}
+                    </Cell>
+                </Section>
+
                 <Section header="Chỉ số hoạt động">
                     <Cell
                         after={<Badge
