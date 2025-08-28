@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useSignal, initDataRaw as _initDataRaw } from '@telegram-apps/sdk-react';
 import {
+    verifyUser,
     storeAuthData,
     getStoredUserInfo,
     clearAuthData,
@@ -30,56 +30,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [isAuthorized, setIsAuthorized] = useState(false);
     const { showSnackbar } = useSnackbar();
 
-    // Sử dụng useSignal để lấy init data như trong InitDataPage mẫu
-    const initDataRaw = useSignal(_initDataRaw);
-
-    // Function để verify user với init data từ hook
-    const verifyUserWithInitData = async (): Promise<AuthResponse> => {
-        const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
-        };
-
-        try {
-            if (initDataRaw && initDataRaw.trim()) {
-                console.log('[AUTH Context] Using Telegram init data:', initDataRaw.slice(0, 100) + '...');
-                headers['x-telegram-init-data'] = initDataRaw;
-            } else {
-                console.log('[AUTH Context] No init data found, using dev bypass');
-                // Development mode - use dev credentials
-                const devAdminId = import.meta.env.VITE_DEV_ADMIN_ID || '5168993511';
-                const devSecret = import.meta.env.VITE_DEV_SECRET || '123456';
-                if (devAdminId) headers['x-dev-admin-id'] = devAdminId;
-                if (devSecret) headers['x-dev-secret'] = devSecret;
-            }
-        } catch (error) {
-            console.warn('[AUTH Context] Error with init data, falling back to dev mode:', error);
-            // Fallback to development mode
-            const devAdminId = import.meta.env.VITE_DEV_ADMIN_ID || '5168993511';
-            const devSecret = import.meta.env.VITE_DEV_SECRET || '123456';
-            if (devAdminId) headers['x-dev-admin-id'] = devAdminId;
-            if (devSecret) headers['x-dev-secret'] = devSecret;
-        }
-
-        console.log('[AUTH Context] Sending headers:', Object.keys(headers));
-
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/verify`, {
-            method: 'POST',
-            headers,
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.detail || 'Lỗi xác thực người dùng');
-        }
-
-        return response.json();
-    };
-
     // Function để thực hiện login
     const login = async (): Promise<void> => {
         try {
             setIsLoading(true);
-            const authData: AuthResponse = await verifyUserWithInitData();
+            const authData: AuthResponse = await verifyUser();
 
             storeAuthData(authData);
             setUser(authData.user);
