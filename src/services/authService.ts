@@ -1,4 +1,4 @@
-import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
+import { retrieveLaunchParams, initDataRaw } from '@telegram-apps/sdk-react';
 
 export interface UserInfo {
     id: number;
@@ -22,19 +22,49 @@ class AuthService {
 
     private getHeaders(): HeadersInit {
         try {
-            const { initDataRaw } = retrieveLaunchParams();
-            console.log('🔍 AuthService - initDataRaw:', initDataRaw);
-            console.log('🔍 AuthService - initDataRaw type:', typeof initDataRaw);
+            // Thử cả 2 cách lấy initData như InitDataPage
+            let initDataValue = null;
+
+            try {
+                const { initDataRaw: launchParamsInitData } = retrieveLaunchParams();
+                initDataValue = launchParamsInitData;
+                console.log('🔍 AuthService - From retrieveLaunchParams:', launchParamsInitData);
+            } catch (err) {
+                console.log('🔍 AuthService - retrieveLaunchParams failed:', err);
+            }
+
+            // Fallback sang direct initDataRaw signal
+            if (!initDataValue) {
+                try {
+                    initDataValue = initDataRaw();
+                    console.log('🔍 AuthService - From initDataRaw signal:', initDataValue);
+                } catch (err) {
+                    console.log('🔍 AuthService - initDataRaw signal failed:', err);
+                }
+            }
+
+            // Fallback sang Telegram WebApp API
+            if (!initDataValue) {
+                const tg = (window as any).Telegram?.WebApp;
+                if (tg && tg.initData) {
+                    initDataValue = tg.initData;
+                    console.log('🔍 AuthService - From Telegram.WebApp:', initDataValue);
+                }
+            }
+
+            console.log('🔍 AuthService - Final initDataValue:', initDataValue);
+            console.log('🔍 AuthService - initDataValue type:', typeof initDataValue);
             console.log('🔍 AuthService - Is DEV mode:', import.meta.env.DEV);
+            console.log('🔍 AuthService - Current URL:', window.location.href);
 
             const headers: HeadersInit = {
                 'Content-Type': 'application/json',
             };
 
             // Check if we have valid initData
-            if (initDataRaw && typeof initDataRaw === 'string' && initDataRaw.trim() !== '') {
+            if (initDataValue && typeof initDataValue === 'string' && initDataValue.trim() !== '') {
                 console.log('✅ AuthService - Using Telegram initData');
-                headers['x-telegram-init-data'] = initDataRaw;
+                headers['x-telegram-init-data'] = initDataValue;
             } else if (import.meta.env.DEV ||
                 window.location.hostname === 'localhost' ||
                 window.location.hostname === '127.0.0.1' ||

@@ -6,6 +6,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 import authService, { UserInfo } from '@/services/authService';
 import { Page } from '@/components/Page';
+import { debugTelegramInitData } from '@/utils/telegramDebug';
 
 interface AuthGuardProps {
     children: React.ReactNode;
@@ -23,22 +24,8 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
             try {
                 setIsLoading(true);
 
-                // Debug: Log initData info
-                try {
-                    const { initDataRaw } = retrieveLaunchParams();
-                    console.log('🔍 Debug AuthGuard - initDataRaw:', initDataRaw);
-                    if (initDataRaw && typeof initDataRaw === 'string') {
-                        const parsed = new URLSearchParams(initDataRaw);
-                        const userStr = parsed.get('user');
-                        if (userStr) {
-                            const user = JSON.parse(userStr);
-                            console.log('🔍 Debug AuthGuard - Parsed user:', user);
-                            console.log('🔍 Debug AuthGuard - User ID:', user.id);
-                        }
-                    }
-                } catch (debugErr) {
-                    console.log('🔍 Debug AuthGuard - Parse error:', debugErr);
-                }
+                // Debug: Chạy comprehensive debug
+                debugTelegramInitData();
 
                 const user = await authService.getCurrentUser();
                 console.log('✅ Debug AuthGuard - Auth success:', user);
