@@ -1,26 +1,27 @@
 import { Section, Cell, List, Text, Button } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useState } from 'react';
-import { useSignal, initDataRaw, initDataState } from '@telegram-apps/sdk-react';
+import { useSignal, initDataRaw as _initDataRaw, initDataState as _initDataState } from '@telegram-apps/sdk-react';
 
 import { Page } from '@/components/Page.tsx';
-import { verifyUser } from '@/services/authService';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const DebugPage: FC = () => {
     const [authResult, setAuthResult] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const { login } = useAuth();
 
-    // Get init data signals
-    const initData = useSignal(initDataRaw);
-    const initState = useSignal(initDataState);
+    // Get init data signals như trong InitDataPage mẫu của Telegram
+    const initData = useSignal(_initDataRaw);
+    const initState = useSignal(_initDataState);
 
     const handleTestAuth = async () => {
         try {
             setLoading(true);
             setError(null);
-            const result = await verifyUser();
-            setAuthResult(result);
+            await login();
+            setAuthResult({ status: 'success', message: 'Authentication successful via AuthContext' });
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Unknown error');
             setAuthResult(null);
